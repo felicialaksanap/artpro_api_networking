@@ -17,7 +17,12 @@ func Init() *echo.Echo {
 	e.GET("/akunuser", controllers.DataAkunUser)
 
 	e.POST("/addprofileuser", controllers.SimpanProfileUser)
-	e.GET("profileuser", controllers.DataProfileUser)
+	e.GET("/profileuser", controllers.DataProfileUser)
+
+	e.POST("/addverifikasidata", controllers.SimpanDataVerifikasi)
+	e.GET("/alldataverifikasi", controllers.DataAllVerifikasi)
+	e.GET("/dataverifikasiuser", controllers.DataVerifikasiUser)
+	e.PUT("/editdataverifikasi", controllers.UpdateDataVerifikasi)
 
 	return e
 }
