@@ -311,3 +311,331 @@ func UpdateDataVerifikasi(iduser int, statusverifikasi string) (Response, error)
 
 	return res, nil
 }
+
+type DomisiliUser struct {
+	IdUser    int    `json:"iduser"`
+	Alamat    string `json:"alamat"`
+	Kecamatan string `json:"kecamatan"`
+	Kelurahan string `json:"kelurahan"`
+	Provinsi  string `json:"provinsi"`
+	Kota      string `json:"kota"`
+	Longitude string `json:"longitude"`
+	Latitude  string `json:"latitude"`
+}
+
+func SimpanDomisiliUser(iduser int, alamat string, kecamatan string, kelurahan string,
+	provinsi string, kota string, longitude string, latitude string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "INSERT INTO userdomisili (iduser, alamat, kecamatan, kelurahan, provinsi, kota, longitude, latitude) VALUES (?, ?, ?, ?, ?, ?, ? ,?)"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(iduser, alamat, kecamatan, kelurahan, provinsi, kota, longitude, latitude)
+	if err != nil {
+		return res, err
+	}
+
+	defer stmt.Close()
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"rowsAffected": rowsAffected,
+	}
+
+	return res, nil
+}
+
+func DataUserDomisili(iduser int) (Response, error) {
+	var obj DomisiliUser
+	var arrobj []DomisiliUser
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatemet := "SELECT * FROM userdomisili WHERE iduser=?"
+
+	rows, err := con.Query(sqlStatemet, iduser)
+
+	defer rows.Close()
+
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.IdUser, &obj.Alamat, &obj.Kecamatan, &obj.Kelurahan,
+			&obj.Provinsi, &obj.Kota, &obj.Longitude, &obj.Latitude)
+
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		arrobj = append(arrobj, obj)
+	}
+	log.Printf("berhasil")
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = arrobj
+
+	return res, nil
+}
+
+type DetailProfileART struct {
+	IdUser             int    `json:"iduser"`
+	PendidikanTerakhir string `json:"pendidikanterakhir"`
+	BeratBadan         int    `json:"beratbadan"`
+	TinggiBadan        int    `json:"tinggibadan"`
+	Agama              string `json:"agama"`
+	TipeKerja          string `json:"tipekerja"`
+	Hewan              string `json:"hewan"`
+	MabukJalan         string `json:"mabukjalan"`
+	SepedaMotor        string `json:"sepedamotor"`
+	Mobil              string `json:"mobil"`
+	Masak              string `json:"masak"`
+}
+
+func SimpanDetailProfileART(iduser int, pendidikanterakhir string, beratbadan int,
+	tinggibadan int, agama string, tipekerja string, hewan string,
+	mabukjalan string, sepedamotor string, mobil string, masak string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "INSERT INTO detailprofileart (iduser, pendidikanterakhir, beratbadan, tinggibadan, agama, tipekerja, hewan, mabukjalan, sepedamotor, mobil, masak) VALUES (?, ?, ?, ?, ?, ?, ? ,?, ?, ?, ?)"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(iduser, pendidikanterakhir, beratbadan, tinggibadan, agama, tipekerja, hewan, mabukjalan, sepedamotor, mobil, masak)
+	if err != nil {
+		return res, err
+	}
+
+	defer stmt.Close()
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"rowsAffected": rowsAffected,
+	}
+
+	return res, nil
+}
+
+func DataUserDetailProfileART(iduser int) (Response, error) {
+	var obj DetailProfileART
+	var arrobj []DetailProfileART
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatemet := "SELECT * FROM detailprofileart WHERE iduser=?"
+
+	rows, err := con.Query(sqlStatemet, iduser)
+
+	defer rows.Close()
+
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.IdUser, &obj.PendidikanTerakhir, &obj.BeratBadan, &obj.TinggiBadan,
+			&obj.Agama, &obj.TipeKerja, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
+			&obj.Masak)
+
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		arrobj = append(arrobj, obj)
+	}
+	log.Printf("berhasil")
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = arrobj
+
+	return res, nil
+}
+
+type DetailKerjaART struct {
+	IdUser     int    `json:"iduser"`
+	Kategori   string `json:"kategori"`
+	Pengalaman string `json:"pengalaman"`
+	GajiAwal   string `json:"gajiawal"`
+	GajiAkhir  string `json:"gajiakhir"`
+}
+
+func SimpanDetailKerjaART(iduser int, kategori string, pengalaman string, gajiawal string, gajiakhir string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "INSERT INTO detailkerjaart (iduser, kategori, pengalaman, gajiawal, gajiakhir) VALUES (?, ?, ?, ?, ?)"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(iduser, kategori, pengalaman, gajiawal, gajiakhir)
+	if err != nil {
+		return res, err
+	}
+
+	defer stmt.Close()
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"rowsAffected": rowsAffected,
+	}
+
+	return res, nil
+}
+
+func DataAllDetailKerjaART() (Response, error) {
+	var obj DetailKerjaART
+	var arrobj []DetailKerjaART
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatemet := "SELECT * FROM detailkerjaart"
+
+	rows, err := con.Query(sqlStatemet)
+
+	defer rows.Close()
+
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.IdUser, &obj.Kategori, &obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir)
+
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		arrobj = append(arrobj, obj)
+	}
+	log.Printf("berhasil")
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = arrobj
+
+	return res, nil
+}
+
+func DataListKerjaPerKategori(kategori string) (Response, error) {
+	var obj DetailKerjaART
+	var arrobj []DetailKerjaART
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatemet := "SELECT * FROM detailkerjaart WHERE kategori=?"
+
+	rows, err := con.Query(sqlStatemet, kategori)
+
+	defer rows.Close()
+
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.IdUser, &obj.Kategori, &obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir)
+
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		arrobj = append(arrobj, obj)
+	}
+	log.Printf("berhasil")
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = arrobj
+
+	return res, nil
+}
+
+type LowonganKerja struct {
+	IdLoker     int    `json:"idloker"`
+	IdUser      int    `json:"iduser"`
+	Kategori    string `json:"kategori"`
+	Informasi   string `json:"informasi"`
+	UraianTugas string `json:"uraiantugas"`
+	Keahlian    string `json:"keahlian"`
+	TipeKerja   string `json:"tipekerja"`
+	GajiAwal    string `json:"gajiawal"`
+	GajiAkhir   string `json:"gajiakhir"`
+}
+
+func SimpanLowonganKerja(iduser int, kategori string, informasi string, uraiantugas string,
+	keahlian string, tipekerja string, gajiawal string, gajiakhir string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "INSERT INTO lowongankerja (iduser, kategori, informasi, uraiantugas, keahlian, tipekerja, gajiawal, gajiakhir) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(iduser, kategori, informasi, uraiantugas, keahlian, tipekerja, gajiawal, gajiakhir)
+	if err != nil {
+		return res, err
+	}
+
+	defer stmt.Close()
+
+	getIdLast, err := result.LastInsertId()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"getIdLast": getIdLast,
+	}
+
+	return res, nil
+}
