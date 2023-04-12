@@ -48,7 +48,27 @@ func Init() *echo.Echo {
 
 	// ===== LOWONGAN KERJA =====
 	e.POST("/addlowongankerja", controllers.SimpanLowonganKerja)
+	e.GET("/alldatalowongankerja", controllers.DataAllLowonganKerja)
+	e.GET("/datadetaillowongankerja", controllers.DataDetailLowonganKerja)
+	e.POST("/addlokerselesai", controllers.SimpanLowonganKerjaSelesai)
+	e.DELETE("/deletelowongankerja", controllers.DeleteDetailLowonganKerja)
 	// === END ===
+
+	// ===== KONTAK USER =====
+	e.POST("/addkontakuser", controllers.SimpanKontakUser)
+	e.GET("/datalistkontakbymajikan", controllers.DataListKontakByMajikan)
+	e.GET("/datalistkontakbyart", controllers.DataListKontakByART)
+	// ==== END ====
+
+	// ===== PENILAIAN =====
+	e.POST("/addpenilaian", controllers.SimpanPenilaian)
+	e.GET("/datapenilaianart", controllers.DataPenilaianART)
+	// === END ===
+
+	// ===== SERTIFIKAT PELATIHAN =====
+	e.POST("/addsertifpath", controllers.SimpanSertifikatPelatihan)
+	e.GET("/datasertifpelatihanuser", controllers.DataSertifPelatihanUser)
+	// ===== END =====
 
 	return e
 }

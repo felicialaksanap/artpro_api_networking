@@ -233,19 +233,108 @@ func DataListKerjaPerKategori(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func SimpanLowonganKerja(c echo.Context) error {
+func SimpanKontakUser(c echo.Context) error {
+	idmajikan := c.FormValue("idmajikan")
+	idart := c.FormValue("idart")
+	waktukontak := c.FormValue("waktukontak")
+	darimana := c.FormValue("darimana")
+
+	imi, _ := strconv.Atoi(idmajikan)
+	iai, _ := strconv.Atoi(idart)
+
+	result, err := models.SimpanKontakuser(imi, iai, waktukontak, darimana)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func DataListKontakByMajikan(c echo.Context) error {
+	idmajikan := c.FormValue("idmajikan")
+
+	ii, _ := strconv.Atoi(idmajikan)
+
+	result, err := models.DataListKontakByMajikan(ii)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func DataListKontakByART(c echo.Context) error {
+	idart := c.FormValue("idart")
+
+	ii, _ := strconv.Atoi(idart)
+
+	result, err := models.DataListKontakByART(ii)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func SimpanPenilaian(c echo.Context) error {
+	idart := c.FormValue("idart")
+	idmajikan := c.FormValue("idmajikan")
+	etika := c.FormValue("etika")
+	estetika := c.FormValue("estetika")
+	kebersihan := c.FormValue("kebersihan")
+	kerapian := c.FormValue("kerapian")
+	kecepatan := c.FormValue("kecepatan")
+	review := c.FormValue("review")
+
+	iai, _ := strconv.Atoi(idart)
+	imi, _ := strconv.Atoi(idmajikan)
+	ei, _ := strconv.Atoi(etika)
+	esi, _ := strconv.Atoi(estetika)
+	ki, _ := strconv.Atoi(kebersihan)
+	kri, _ := strconv.Atoi(kerapian)
+	kci, _ := strconv.Atoi(kecepatan)
+
+	result, err := models.SimpanPenilaian(iai, imi, ei, esi, ki, kri, kci, review)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func DataPenilaianART(c echo.Context) error {
+	idart := c.FormValue("idart")
+
+	ii, _ := strconv.Atoi(idart)
+
+	result, err := models.DataPenilaianART(ii)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func SimpanSertifikatPelatihan(c echo.Context) error {
 	iduser := c.FormValue("iduser")
-	kategori := c.FormValue("kategori")
-	informasi := c.FormValue("informasi")
-	uraiantugas := c.FormValue("uraiantugas")
-	keahlian := c.FormValue("keahlian")
-	tipekerja := c.FormValue("tipekerja")
-	gajiawal := c.FormValue("gajiawal")
-	gajiakhir := c.FormValue("gajiakhir")
+	sertifpath := c.FormValue("sertifpath")
 
 	ii, _ := strconv.Atoi(iduser)
 
-	result, err := models.SimpanLowonganKerja(ii, kategori, informasi, uraiantugas, keahlian, tipekerja, gajiawal, gajiakhir)
+	result, err := models.SimpanSertifikatPelatihan(ii, sertifpath)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func DataSertifPelatihanUser(c echo.Context) error {
+	iduser := c.FormValue("iduser")
+
+	ii, _ := strconv.Atoi(iduser)
+
+	result, err := models.DataSertifPelatihanUser(ii)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
