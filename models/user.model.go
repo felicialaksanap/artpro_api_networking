@@ -2,9 +2,133 @@ package models
 
 import (
 	"artpro_api_networking/db"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
 )
+
+func UploadFoto(request *http.Request, id string, folder string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	// LIMIT 10 MB
+	request.ParseMultipartForm(10 * 1024 * 1024)
+
+	file, handler, err := request.FormFile("photo")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer file.Close()
+
+	fmt.Println("File Info")
+	fmt.Println("File Name: ", handler.Filename)
+	fmt.Println("File Size: ", handler.Size)
+	fmt.Println("File Type: ", handler.Header.Get("Content-Type"))
+
+	// Upload File
+	tempFile, err2 := os.CreateTemp("uploads/"+folder, "upload-*.png")
+	if err2 != nil {
+		fmt.Println(err2)
+	}
+	defer tempFile.Close()
+
+	fileBytes, err3 := io.ReadAll(file)
+	if err3 != nil {
+		fmt.Println(err3)
+	}
+	tempFile.Write(fileBytes)
+	tempFile.Close()
+	fmt.Println("Selesai")
+
+	newPath := "uploads/" + folder + "/" + folder + "-" + id + ".png"
+	fmt.Println("newpath: " + newPath)
+
+	renameFile := os.Rename(tempFile.Name(), newPath)
+	if renameFile != nil {
+		log.Fatal(renameFile)
+	}
+
+	if folder == "fotoktp" {
+		sqlStatement := "UPDATE userverifikasi SET fotoktp = ? WHERE iduser = ?"
+
+		stmt, err4 := con.Prepare(sqlStatement)
+		if err4 != nil {
+			return res, err
+		}
+
+		result, err5 := stmt.Exec(newPath, id)
+		if err5 != nil {
+			return res, err5
+		}
+
+		rowsAffected, err6 := result.RowsAffected()
+		if err6 != nil {
+			return res, err6
+		}
+
+		res.Status = http.StatusOK
+		res.Message = "Sukses Upload Foto"
+		res.Data = map[string]int64{
+			"rows": rowsAffected,
+		}
+	} else if folder == "selfiektp" {
+		sqlStatement := "UPDATE userverifikasi SET selfiektp = ? WHERE iduser = ?"
+
+		stmt, err4 := con.Prepare(sqlStatement)
+		if err4 != nil {
+			return res, err
+		}
+
+		result, err5 := stmt.Exec(newPath, id)
+		if err5 != nil {
+			return res, err5
+		}
+
+		rowsAffected, err6 := result.RowsAffected()
+		if err6 != nil {
+			return res, err6
+		}
+
+		res.Status = http.StatusOK
+		res.Message = "Sukses Upload Foto"
+		res.Data = map[string]int64{
+			"rows": rowsAffected,
+		}
+	} else if folder == "profpic" {
+		sqlStatement := "UPDATE userprofile SET profilepicpath = ? WHERE iduser = ?"
+
+		stmt, err4 := con.Prepare(sqlStatement)
+		if err4 != nil {
+			return res, err
+		}
+
+		result, err5 := stmt.Exec(newPath, id)
+		if err5 != nil {
+			return res, err5
+		}
+
+		rowsAffected, err6 := result.RowsAffected()
+		if err6 != nil {
+			return res, err6
+		}
+
+		res.Status = http.StatusOK
+		res.Message = "Sukses Upload Foto"
+		res.Data = map[string]int64{
+			"rows": rowsAffected,
+		}
+	}
+
+	return res, err
+}
+
+func GetPhoto(path string, id string) string {
+	result := "uploads/" + path + "/" + path + "-" + id + ".png"
+	return result
+}
 
 type AkunUser struct {
 	IdUser     int    `json:"iduser"`
@@ -86,24 +210,25 @@ type ProfileUser struct {
 	IdUser         int    `json:"iduser"`
 	NamaLengkap    string `json:"namalengkap"`
 	JenisKelamin   string `json:"jeniskelamin"`
+	TempatLahir    string `json:"tempatlahir"`
 	TanggalLahir   string `json:"tanggallahir"`
 	Telephone      string `json:"telephone"`
 	ProfilePicPath string `json:"profilepicpath"`
 }
 
-func SimpanProfileUser(iduser int, namalengkap string, jeniskelamin string, tanggallahir string, telephone string, profilepicpath string) (Response, error) {
+func SimpanProfileUser(iduser int, namalengkap string, jeniskelamin string, tempatlahir string, tanggallahir string, telephone string, profilepicpath string) (Response, error) {
 	var res Response
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO userprofile (iduser, namalengkap, jeniskelamin, tanggallahir, telephone, profilepicpath) VALUES (?, ?, ?, ?, ?, ?)"
+	sqlStatement := "INSERT INTO userprofile (iduser, namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone, profilepicpath) VALUES (?, ?, ?, ?, ?, ?, ?)"
 
 	stmt, err := con.Prepare(sqlStatement)
 	if err != nil {
 		return res, err
 	}
 
-	result, err := stmt.Exec(iduser, namalengkap, jeniskelamin, tanggallahir, telephone, profilepicpath)
+	result, err := stmt.Exec(iduser, namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone, profilepicpath)
 	if err != nil {
 		return res, err
 	}
@@ -792,8 +917,8 @@ func DataPenilaianART(idart int) (Response, error) {
 }
 
 type SertifikatPelatihan struct {
-	IdUser		int		`json:"iduser"`
-	SertifPath	string	`json:"sertifpath"`
+	IdUser     int    `json:"iduser"`
+	SertifPath string `json:"sertifpath"`
 }
 
 func SimpanSertifikatPelatihan(iduser int, sertifpath string) (Response, error) {

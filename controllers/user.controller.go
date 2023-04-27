@@ -7,6 +7,24 @@ import (
 	"strconv"
 )
 
+func UploadFoto(c echo.Context) error {
+	folder := c.FormValue("folder")
+	id := c.FormValue("id")
+
+	result, err := models.UploadFoto(c.Request(), id, folder)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+	return c.JSON(http.StatusOK, result)
+}
+
+func GetPhoto(c echo.Context) error {
+	id := c.FormValue("id")
+	folder := c.FormValue("folder")
+	result := models.GetPhoto(folder, id)
+	return c.File(result)
+}
+
 func SimpanAkunUser(c echo.Context) error {
 	email := c.FormValue("email")
 	password := c.FormValue("password")
@@ -36,13 +54,14 @@ func SimpanProfileUser(c echo.Context) error {
 	iduser := c.FormValue("iduser")
 	namalengkap := c.FormValue("namalengkap")
 	jeniskelamin := c.FormValue("jeniskelamin")
+	tempatlahir := c.FormValue("tempatlahir")
 	tanggallahir := c.FormValue("tanggallahir")
 	telephone := c.FormValue("telephone")
 	profilepicpath := c.FormValue("profilepicpath")
 
 	ii, _ := strconv.Atoi(iduser)
 
-	result, err := models.SimpanProfileUser(ii, namalengkap, jeniskelamin, tanggallahir, telephone, profilepicpath)
+	result, err := models.SimpanProfileUser(ii, namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone, profilepicpath)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}

@@ -13,6 +13,10 @@ func Init() *echo.Echo {
 		return c.String(http.StatusOK, "Selamat Datang di Echo")
 	})
 
+	// ===== FOTO USER (PROFILE / VERIFIKASI) =====
+	e.GET("/getimage", controllers.GetPhoto)
+	e.POST("/uploadimage", controllers.UploadFoto)
+
 	// ==== AKUN USER ====
 	e.POST("/addakunuser", controllers.SimpanAkunUser)
 	e.GET("/akunuser", controllers.DataAkunUser)
