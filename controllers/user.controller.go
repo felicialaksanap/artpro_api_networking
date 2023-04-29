@@ -252,6 +252,18 @@ func DataListKerjaPerKategori(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
+func DataUserDetailKerjaART(c echo.Context) error {
+	iduser := c.FormValue("iduser")
+
+	ii, _ := strconv.Atoi(iduser)
+	result, err := models.DataUserDetailKerjaART(ii)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
 func SimpanKontakUser(c echo.Context) error {
 	idmajikan := c.FormValue("idmajikan")
 	idart := c.FormValue("idart")

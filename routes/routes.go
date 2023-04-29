@@ -48,6 +48,7 @@ func Init() *echo.Echo {
 	e.POST("/addkerjaart", controllers.SimpanDetailKerjaART)
 	e.GET("/alldatadetailkerjaart", controllers.DataAllDetailKerjaART)
 	e.GET("/datakerjaperkategori", controllers.DataListKerjaPerKategori)
+	e.GET("/datauserdetailkerjaart", controllers.DataUserDetailKerjaART)
 	// ==== END ====
 
 	// ===== LOWONGAN KERJA =====
