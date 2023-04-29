@@ -286,6 +286,8 @@ func DataProfileUser(iduser int) (Response, error) {
 	return res, nil
 }
 
+// UPDATE PROFILE
+
 type VerifikasiUser struct {
 	IdUser           int    `json:"iduser"`
 	NIK              string `json:"nik"`
@@ -525,7 +527,8 @@ type DetailProfileART struct {
 	BeratBadan         int    `json:"beratbadan"`
 	TinggiBadan        int    `json:"tinggibadan"`
 	Agama              string `json:"agama"`
-	TipeKerja          string `json:"tipekerja"`
+	TKMenginap         string `json:"tkmenginap"`
+	TKWarnen           string `json:"tkwarnen"`
 	Hewan              string `json:"hewan"`
 	MabukJalan         string `json:"mabukjalan"`
 	SepedaMotor        string `json:"sepedamotor"`
@@ -534,20 +537,20 @@ type DetailProfileART struct {
 }
 
 func SimpanDetailProfileART(iduser int, pendidikanterakhir string, beratbadan int,
-	tinggibadan int, agama string, tipekerja string, hewan string,
+	tinggibadan int, agama string, tkmenginap string, tkwarnen string, hewan string,
 	mabukjalan string, sepedamotor string, mobil string, masak string) (Response, error) {
 	var res Response
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO detailprofileart (iduser, pendidikanterakhir, beratbadan, tinggibadan, agama, tipekerja, hewan, mabukjalan, sepedamotor, mobil, masak) VALUES (?, ?, ?, ?, ?, ?, ? ,?, ?, ?, ?)"
+	sqlStatement := "INSERT INTO detailprofileart (iduser, pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak) VALUES (?, ?, ?, ?, ?, ?, ? ,?, ?, ?, ?, ?)"
 
 	stmt, err := con.Prepare(sqlStatement)
 	if err != nil {
 		return res, err
 	}
 
-	result, err := stmt.Exec(iduser, pendidikanterakhir, beratbadan, tinggibadan, agama, tipekerja, hewan, mabukjalan, sepedamotor, mobil, masak)
+	result, err := stmt.Exec(iduser, pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak)
 	if err != nil {
 		return res, err
 	}
@@ -588,7 +591,7 @@ func DataUserDetailProfileART(iduser int) (Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(&obj.IdUser, &obj.PendidikanTerakhir, &obj.BeratBadan, &obj.TinggiBadan,
-			&obj.Agama, &obj.TipeKerja, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
+			&obj.Agama, &obj.TKMenginap, &obj.TKWarnen, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
 			&obj.Masak)
 
 		if err != nil {
@@ -607,26 +610,33 @@ func DataUserDetailProfileART(iduser int) (Response, error) {
 }
 
 type DetailKerjaART struct {
-	IdUser     int    `json:"iduser"`
-	Kategori   string `json:"kategori"`
-	Pengalaman string `json:"pengalaman"`
-	GajiAwal   string `json:"gajiawal"`
-	GajiAkhir  string `json:"gajiakhir"`
+	IdUser       int    `json:"iduser"`
+	KPrt         string `json:"kprt"`
+	KBabysitter  string `json:"kbabysitter"`
+	KSeniorcare  string `json:"kseniorcare"`
+	KSupir       string `json:"ksupir"`
+	KOfficeboy   string `json:"kofficeboy"`
+	KTukangkebun string `json:"ktukangkebun"`
+	Pengalaman   string `json:"pengalaman"`
+	GajiAwal     string `json:"gajiawal"`
+	GajiAkhir    string `json:"gajiakhir"`
 }
 
-func SimpanDetailKerjaART(iduser int, kategori string, pengalaman string, gajiawal string, gajiakhir string) (Response, error) {
+func SimpanDetailKerjaART(iduser int, kprt string, kbabysitter string, kseniorcare string,
+	ksupir string, kofficeboy string, ktukangkebun,
+	pengalaman string, gajiawal string, gajiakhir string) (Response, error) {
 	var res Response
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO detailkerjaart (iduser, kategori, pengalaman, gajiawal, gajiakhir) VALUES (?, ?, ?, ?, ?)"
+	sqlStatement := "INSERT INTO detailkerjaart (iduser, kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
 	stmt, err := con.Prepare(sqlStatement)
 	if err != nil {
 		return res, err
 	}
 
-	result, err := stmt.Exec(iduser, kategori, pengalaman, gajiawal, gajiakhir)
+	result, err := stmt.Exec(iduser, kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir)
 	if err != nil {
 		return res, err
 	}
@@ -647,41 +657,44 @@ func SimpanDetailKerjaART(iduser int, kategori string, pengalaman string, gajiaw
 	return res, nil
 }
 
-func DataListKerjaPerKategori(kategori string) (Response, error) {
-	var obj DetailKerjaART
-	var arrobj []DetailKerjaART
-	var res Response
-
-	con := db.CreateCon()
-
-	sqlStatemet := "SELECT * FROM detailkerjaart WHERE kategori=?"
-
-	rows, err := con.Query(sqlStatemet, kategori)
-
-	defer rows.Close()
-
-	if err != nil {
-		log.Printf(err.Error())
-		return res, err
-	}
-
-	for rows.Next() {
-		err = rows.Scan(&obj.IdUser, &obj.Kategori, &obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir)
-
-		if err != nil {
-			log.Printf(err.Error())
-			return res, err
-		}
-
-		arrobj = append(arrobj, obj)
-	}
-	log.Printf("berhasil")
-	res.Status = http.StatusOK
-	res.Message = "Sukses"
-	res.Data = arrobj
-
-	return res, nil
-}
+//func DataListKerjaPerKategori(kategori string) (Response, error) {
+//	var obj DetailKerjaART
+//	var arrobj []DetailKerjaART
+//	var res Response
+//
+//	con := db.CreateCon()
+//
+//	sqlStatemet := "SELECT * FROM detailkerjaart WHERE kategori=?"
+//
+//	rows, err := con.Query(sqlStatemet, kategori)
+//
+//	defer rows.Close()
+//
+//	if err != nil {
+//		log.Printf(err.Error())
+//		return res, err
+//	}
+//
+//	for rows.Next() {
+//		err = rows.Scan(&obj.IdUser, &obj.KPrt, &obj.KBabysitter,
+//						&obj.KOfficeboy, &obj.KSupir, &obj.KOfficeboy,
+//						&obj.KTukangkebun, &obj.Pengalaman,
+//						&obj.GajiAwal, &obj.GajiAkhir)
+//
+//		if err != nil {
+//			log.Printf(err.Error())
+//			return res, err
+//		}
+//
+//		arrobj = append(arrobj, obj)
+//	}
+//	log.Printf("berhasil")
+//	res.Status = http.StatusOK
+//	res.Message = "Sukses"
+//	res.Data = arrobj
+//
+//	return res, nil
+//}
 
 func DataAllDetailKerjaART() (Response, error) {
 	var obj DetailKerjaART
@@ -702,7 +715,10 @@ func DataAllDetailKerjaART() (Response, error) {
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&obj.IdUser, &obj.Kategori, &obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir)
+		err = rows.Scan(&obj.IdUser, &obj.KPrt, &obj.KBabysitter,
+			&obj.KOfficeboy, &obj.KSupir, &obj.KOfficeboy,
+			&obj.KTukangkebun, &obj.Pengalaman,
+			&obj.GajiAwal, &obj.GajiAkhir)
 
 		if err != nil {
 			log.Printf(err.Error())
@@ -738,7 +754,11 @@ func DataUserDetailKerjaART(iduser int) (Response, error) {
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&obj.IdUser, &obj.Kategori, &obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir)
+		err = rows.Scan(
+			&obj.IdUser, &obj.KPrt, &obj.KBabysitter,
+			&obj.KOfficeboy, &obj.KSupir, &obj.KOfficeboy,
+			&obj.KTukangkebun, &obj.Pengalaman,
+			&obj.GajiAwal, &obj.GajiAkhir)
 
 		if err != nil {
 			log.Printf(err.Error())

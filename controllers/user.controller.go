@@ -183,7 +183,8 @@ func SimpanDetailProfileART(c echo.Context) error {
 	beratbadan := c.FormValue("beratbadan")
 	tinggibadan := c.FormValue("tinggibadan")
 	agama := c.FormValue("agama")
-	tipekerja := c.FormValue("tipekerja")
+	tkmenginap := c.FormValue("tkmenginap")
+	tkwarnen := c.FormValue("tkwarnenr")
 	hewan := c.FormValue("hewan")
 	mabukjalan := c.FormValue("mabukjalan")
 	sepedamotor := c.FormValue("sepedamotor")
@@ -194,7 +195,7 @@ func SimpanDetailProfileART(c echo.Context) error {
 	bbi, _ := strconv.Atoi(beratbadan)
 	tti, _ := strconv.Atoi(tinggibadan)
 
-	result, err := models.SimpanDetailProfileART(ii, pendidikanterakhir, bbi, tti, agama, tipekerja, hewan, mabukjalan, sepedamotor, mobil, masak)
+	result, err := models.SimpanDetailProfileART(ii, pendidikanterakhir, bbi, tti, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -217,14 +218,19 @@ func DataUserDetailProfileART(c echo.Context) error {
 
 func SimpanDetailKerjaART(c echo.Context) error {
 	iduser := c.FormValue("iduser")
-	kategori := c.FormValue("kategori")
+	kprt := c.FormValue("kprt")
+	kbabysitter := c.FormValue("kbabysitter")
+	kseniorcare := c.FormValue("kseniorcare")
+	ksupir := c.FormValue("ksupir")
+	kofficeboy := c.FormValue("kofficeboy")
+	ktukangkebun := c.FormValue("ktukangkebun")
 	pengalaman := c.FormValue("pengalaman")
 	gajiawal := c.FormValue("gajiawal")
 	gajiakhir := c.FormValue("gajiakhir")
 
 	ii, _ := strconv.Atoi(iduser)
 
-	result, err := models.SimpanDetailKerjaART(ii, kategori, pengalaman, gajiawal, gajiakhir)
+	result, err := models.SimpanDetailKerjaART(ii, kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -241,16 +247,16 @@ func DataAllDetailKerjaART(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func DataListKerjaPerKategori(c echo.Context) error {
-	kategori := c.FormValue("kategori")
-
-	result, err := models.DataListKerjaPerKategori(kategori)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, result)
-}
+//func DataListKerjaPerKategori(c echo.Context) error {
+//	kategori := c.FormValue("kategori")
+//
+//	result, err := models.DataListKerjaPerKategori(kategori)
+//	if err != nil {
+//		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+//	}
+//
+//	return c.JSON(http.StatusOK, result)
+//}
 
 func DataUserDetailKerjaART(c echo.Context) error {
 	iduser := c.FormValue("iduser")

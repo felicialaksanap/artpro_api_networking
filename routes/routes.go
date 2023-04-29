@@ -24,6 +24,7 @@ func Init() *echo.Echo {
 
 	// ==== PROFILE USER ====
 	e.POST("/addprofileuser", controllers.SimpanProfileUser)
+
 	e.GET("/profileuser", controllers.DataProfileUser)
 	// ==== END ====
 
@@ -47,7 +48,7 @@ func Init() *echo.Echo {
 	// ===== DETAIL KERJA ART ======
 	e.POST("/addkerjaart", controllers.SimpanDetailKerjaART)
 	e.GET("/alldatadetailkerjaart", controllers.DataAllDetailKerjaART)
-	e.GET("/datakerjaperkategori", controllers.DataListKerjaPerKategori)
+	//e.GET("/datakerjaperkategori", controllers.DataListKerjaPerKategori)
 	e.GET("/datauserdetailkerjaart", controllers.DataUserDetailKerjaART)
 	// ==== END ====
 
