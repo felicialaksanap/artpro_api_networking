@@ -206,6 +206,68 @@ func DataAkunUser(email string, password string) (Response, error) {
 	return res, nil
 }
 
+func UpdateEmailUser(iduser int, email string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "UPDATE userakun SET email=? WHERE iduser = ?"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(email, iduser)
+	if err != nil {
+		return res, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"rows": rowsAffected,
+	}
+
+	return res, nil
+}
+
+func UpdatePassUser(iduser int, password string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "UPDATE userakun SET password=? WHERE iduser = ?"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(password, iduser)
+	if err != nil {
+		return res, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"rows": rowsAffected,
+	}
+
+	return res, nil
+}
+
 type ProfileUser struct {
 	IdUser         int    `json:"iduser"`
 	NamaLengkap    string `json:"namalengkap"`
@@ -287,6 +349,36 @@ func DataProfileUser(iduser int) (Response, error) {
 }
 
 // UPDATE PROFILE
+func UpdateProfileUser(iduser int, namalengkap string, jeniskelamin string, tempatlahir string, tanggallahir string, telephone string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "UPDATE userprofile SET namalengkap = ?, jeniskelamin = ?, tempatlahir = ?, tanggallahir = ?, telephone = ? WHERE iduser = ?"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone, iduser)
+	if err != nil {
+		return res, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"rows": rowsAffected,
+	}
+
+	return res, nil
+}
 
 type VerifikasiUser struct {
 	IdUser           int    `json:"iduser"`
@@ -348,41 +440,6 @@ func DataAllVerifikasi() (Response, error) {
 	sqlStatement := "SELECT * FROM userverifikasi"
 
 	rows, err := con.Query(sqlStatement)
-	if err != nil {
-		return res, err
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		err = rows.Scan(&obj.IdUser, &obj.NIK, &obj.TempatLahir, &obj.TanggalLahir, &obj.Alamat,
-			&obj.Kecamatan, &obj.Kelurahan, &obj.RT, &obj.RW, &obj.FotoKTP, &obj.SelfieKTP,
-			&obj.StatusVerifikasi)
-
-		if err != nil {
-			return res, err
-		}
-
-		arrobj = append(arrobj, obj)
-	}
-
-	res.Status = http.StatusOK
-	res.Message = "Sukses"
-	res.Data = arrobj
-
-	return res, nil
-}
-
-func DataVerifikasiUser(iduser int) (Response, error) {
-	var obj VerifikasiUser
-	var arrobj []VerifikasiUser
-	var res Response
-
-	con := db.CreateCon()
-
-	sqlStatement := "SELECT * FROM userverifikasi WHERE iduser=?"
-
-	rows, err := con.Query(sqlStatement, iduser)
 	if err != nil {
 		return res, err
 	}
@@ -517,6 +574,40 @@ func DataUserDomisili(iduser int) (Response, error) {
 	res.Status = http.StatusOK
 	res.Message = "Sukses"
 	res.Data = arrobj
+
+	return res, nil
+}
+
+func UpdateUserDomisili(iduser int, alamat string, kecamatan string, kelurahan string,
+	provinsi string, kota string, longitude string, latitude string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "UPDATE userdomisili SET alamat=?, kecamatan=?, kelurahan=?, provinsi=?, kota=?, longitude=?, latitude=? WHERE iduser=?"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(alamat, kecamatan, kelurahan, provinsi, kota, longitude, latitude, iduser)
+	if err != nil {
+		return res, err
+	}
+
+	defer stmt.Close()
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"rowsAffected": rowsAffected,
+	}
 
 	return res, nil
 }
@@ -657,6 +748,45 @@ func SimpanDetailKerjaART(iduser int, kprt string, kbabysitter string, kseniorca
 	return res, nil
 }
 
+func DataAllDetailKerjaART() (Response, error) {
+	var obj DetailKerjaART
+	var arrobj []DetailKerjaART
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatemet := "SELECT * FROM detailkerjaart"
+
+	rows, err := con.Query(sqlStatemet)
+
+	defer rows.Close()
+
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.IdUser, &obj.KPrt, &obj.KBabysitter,
+			&obj.KOfficeboy, &obj.KSupir, &obj.KOfficeboy,
+			&obj.KTukangkebun, &obj.Pengalaman,
+			&obj.GajiAwal, &obj.GajiAkhir)
+
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		arrobj = append(arrobj, obj)
+	}
+	log.Printf("berhasil")
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = arrobj
+
+	return res, nil
+}
+
 //func DataListKerjaPerKategori(kategori string) (Response, error) {
 //	var obj DetailKerjaART
 //	var arrobj []DetailKerjaART
@@ -696,41 +826,37 @@ func SimpanDetailKerjaART(iduser int, kprt string, kbabysitter string, kseniorca
 //	return res, nil
 //}
 
-func DataAllDetailKerjaART() (Response, error) {
-	var obj DetailKerjaART
-	var arrobj []DetailKerjaART
+func UpdateUserDetailProfileART(iduser int, pendidikanterakhir string, beratbadan int,
+	tinggibadan int, agama string, tkmenginap string, tkwarnen string, hewan string,
+	mabukjalan string, sepedamotor string, mobil string, masak string) (Response, error) {
 	var res Response
 
 	con := db.CreateCon()
 
-	sqlStatemet := "SELECT * FROM detailkerjaart"
+	sqlStatement := "UPDATE detailprofileart SET pendidikanterakhir=?, beratbadan=?, tinggibadan=?, agama=?, tkmenginap=?, tkwarnen=?, hewan=?, mabukjalan=?, sepedamotor=?, mobil=?, masak=?WHERE iduser=?"
 
-	rows, err := con.Query(sqlStatemet)
-
-	defer rows.Close()
-
+	stmt, err := con.Prepare(sqlStatement)
 	if err != nil {
-		log.Printf(err.Error())
 		return res, err
 	}
 
-	for rows.Next() {
-		err = rows.Scan(&obj.IdUser, &obj.KPrt, &obj.KBabysitter,
-			&obj.KOfficeboy, &obj.KSupir, &obj.KOfficeboy,
-			&obj.KTukangkebun, &obj.Pengalaman,
-			&obj.GajiAwal, &obj.GajiAkhir)
-
-		if err != nil {
-			log.Printf(err.Error())
-			return res, err
-		}
-
-		arrobj = append(arrobj, obj)
+	result, err := stmt.Exec(pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, iduser)
+	if err != nil {
+		return res, err
 	}
-	log.Printf("berhasil")
+
+	defer stmt.Close()
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return res, err
+	}
+
 	res.Status = http.StatusOK
 	res.Message = "Sukses"
-	res.Data = arrobj
+	res.Data = map[string]int64{
+		"rowsAffected": rowsAffected,
+	}
 
 	return res, nil
 }
@@ -771,6 +897,41 @@ func DataUserDetailKerjaART(iduser int) (Response, error) {
 	res.Status = http.StatusOK
 	res.Message = "Sukses"
 	res.Data = arrobj
+
+	return res, nil
+}
+
+func UpdateUserDetailKerja(iduser int, kprt string, kbabysitter string,
+	kseniorcare string, ksupir string, kofficeboy string,
+	ktukangkebun string, pengalaman string, gajiawal string, gajiakhir string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "UPDATE detailkerjaart SET kprt=?, kbabysitter=?, kseniorcare=?, ksupir=?, kofficeboy=?, ktukangkebun=?, pengalaman=?, gajiawal=?, gajiakhir=? WHERE iduser=?"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir, iduser)
+	if err != nil {
+		return res, err
+	}
+
+	defer stmt.Close()
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"rowsAffected": rowsAffected,
+	}
 
 	return res, nil
 }

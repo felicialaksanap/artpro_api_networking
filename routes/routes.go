@@ -20,24 +20,26 @@ func Init() *echo.Echo {
 	// ==== AKUN USER ====
 	e.POST("/addakunuser", controllers.SimpanAkunUser)
 	e.GET("/akunuser", controllers.DataAkunUser)
+	e.PUT("/editemailuser", controllers.UpdateEmailUser)
+	e.PUT("/editpassuser", controllers.UpdatePassUser)
 	// === END ====
 
 	// ==== PROFILE USER ====
 	e.POST("/addprofileuser", controllers.SimpanProfileUser)
-
 	e.GET("/profileuser", controllers.DataProfileUser)
+	e.PUT("/editprofileuser", controllers.UpdateProfileUser)
 	// ==== END ====
 
 	// ===== VERIFIKASI DATA KTP =====
 	e.POST("/addverifikasidata", controllers.SimpanDataVerifikasi)
 	e.GET("/alldataverifikasi", controllers.DataAllVerifikasi)
-	e.GET("/dataverifikasiuser", controllers.DataVerifikasiUser)
 	e.PUT("/editdataverifikasi", controllers.UpdateDataVerifikasi)
 	// ==== END ====
 
 	// ==== ALAMAT DOMISILI USER =====
 	e.POST("/adduserdomisili", controllers.SimpanDomisiliUser)
 	e.GET("/datauserdomisili", controllers.DataUserDomisili)
+	e.PUT("/edituserdomisili", controllers.UpdateUserDomisili)
 	// ===== END ======
 
 	// ==== DETAIL PROFILE ART =====

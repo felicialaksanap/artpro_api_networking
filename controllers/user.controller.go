@@ -50,6 +50,34 @@ func DataAkunUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
+func UpdateEmailUser(c echo.Context) error {
+	iduser := c.FormValue("iduser")
+	email := c.FormValue("email")
+
+	ii, _ := strconv.Atoi(iduser)
+
+	result, err := models.UpdateEmailUser(ii, email)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdatePassUser(c echo.Context) error {
+	iduser := c.FormValue("iduser")
+	password := c.FormValue("password")
+
+	ii, _ := strconv.Atoi(iduser)
+
+	result, err := models.UpdatePassUser(ii, password)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
 func SimpanProfileUser(c echo.Context) error {
 	iduser := c.FormValue("iduser")
 	namalengkap := c.FormValue("namalengkap")
@@ -75,6 +103,24 @@ func DataProfileUser(c echo.Context) error {
 	ii, _ := strconv.Atoi(iduser)
 
 	result, err := models.DataProfileUser(ii)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateProfileUser(c echo.Context) error {
+	iduser := c.FormValue("iduser")
+	namalengkap := c.FormValue("namalengkap")
+	jeniskelamin := c.FormValue("jeniskelamin")
+	tempatlahir := c.FormValue("tempatlahir")
+	tanggallahir := c.FormValue("tanggallahir")
+	telephone := c.FormValue("telephone")
+
+	ii, _ := strconv.Atoi(iduser)
+
+	result, err := models.UpdateProfileUser(ii, namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -110,19 +156,6 @@ func SimpanDataVerifikasi(c echo.Context) error {
 
 func DataAllVerifikasi(c echo.Context) error {
 	result, err := models.DataAllVerifikasi()
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, result)
-}
-
-func DataVerifikasiUser(c echo.Context) error {
-	iduser := c.FormValue("iduser")
-
-	ii, _ := strconv.Atoi(iduser)
-
-	result, err := models.DataVerifikasiUser(ii)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -170,6 +203,26 @@ func DataUserDomisili(c echo.Context) error {
 	ii, _ := strconv.Atoi(iduser)
 
 	result, err := models.DataUserDomisili(ii)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateUserDomisili(c echo.Context) error {
+	iduser := c.FormValue("iduser")
+	alamat := c.FormValue("alamat")
+	kecamatan := c.FormValue("kecamatan")
+	kelurahan := c.FormValue("kelurahan")
+	provinsi := c.FormValue("provinsi")
+	kota := c.FormValue("kota")
+	longitude := c.FormValue("longitude")
+	latitude := c.FormValue("latitude")
+
+	ii, _ := strconv.Atoi(iduser)
+
+	result, err := models.UpdateUserDomisili(ii, alamat, kecamatan, kelurahan, provinsi, kota, longitude, latitude)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
