@@ -45,6 +45,7 @@ func Init() *echo.Echo {
 	// ==== DETAIL PROFILE ART =====
 	e.POST("/addprofileart", controllers.SimpanDetailProfileART)
 	e.GET("/datauserdetailprofileart", controllers.DataUserDetailProfileART)
+	e.PUT("/edituserdetailprofileart", controllers.UpdateUserDetailProfileART)
 	// ==== END ====
 
 	// ===== DETAIL KERJA ART ======
@@ -52,6 +53,7 @@ func Init() *echo.Echo {
 	e.GET("/alldatadetailkerjaart", controllers.DataAllDetailKerjaART)
 	//e.GET("/datakerjaperkategori", controllers.DataListKerjaPerKategori)
 	e.GET("/datauserdetailkerjaart", controllers.DataUserDetailKerjaART)
+	e.PUT("/edituserdetailkerjaart", controllers.UpdateUserDetailKerja)
 	// ==== END ====
 
 	// ===== LOWONGAN KERJA =====

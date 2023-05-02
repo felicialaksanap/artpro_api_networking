@@ -65,12 +65,10 @@ func UpdateEmailUser(c echo.Context) error {
 }
 
 func UpdatePassUser(c echo.Context) error {
-	iduser := c.FormValue("iduser")
+	email := c.FormValue("email")
 	password := c.FormValue("password")
 
-	ii, _ := strconv.Atoi(iduser)
-
-	result, err := models.UpdatePassUser(ii, password)
+	result, err := models.UpdatePassUser(email, password)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -269,6 +267,32 @@ func DataUserDetailProfileART(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
+func UpdateUserDetailProfileART(c echo.Context) error {
+	iduser := c.FormValue("iduser")
+	pendidikanterakhir := c.FormValue("pendidikanterakhir")
+	beratbadan := c.FormValue("beratbadan")
+	tinggibadan := c.FormValue("tinggibadan")
+	agama := c.FormValue("agama")
+	tkmenginap := c.FormValue("tkmenginap")
+	tkwarnen := c.FormValue("tkwarnen")
+	hewan := c.FormValue("hewan")
+	mabukjalan := c.FormValue("mabukjalan")
+	sepedamotor := c.FormValue("sepedamotor")
+	mobil := c.FormValue("mobil")
+	masak := c.FormValue("masak")
+
+	ii, _ := strconv.Atoi(iduser)
+	bi, _ := strconv.Atoi(beratbadan)
+	ti, _ := strconv.Atoi(tinggibadan)
+
+	result, err := models.UpdateUserDetailProfileART(ii, pendidikanterakhir, bi, ti, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
 func SimpanDetailKerjaART(c echo.Context) error {
 	iduser := c.FormValue("iduser")
 	kprt := c.FormValue("kprt")
@@ -316,6 +340,28 @@ func DataUserDetailKerjaART(c echo.Context) error {
 
 	ii, _ := strconv.Atoi(iduser)
 	result, err := models.DataUserDetailKerjaART(ii)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateUserDetailKerja(c echo.Context) error {
+	iduser := c.FormValue("iduser")
+	kprt := c.FormValue("kprt")
+	kbabysitter := c.FormValue("kbabysitter")
+	kseniorcare := c.FormValue("kseniorcare")
+	ksupir := c.FormValue("ksupir")
+	kofficeboy := c.FormValue("kofficeboy")
+	ktukangkebun := c.FormValue("ktukangkebun")
+	pengalaman := c.FormValue("pengalaman")
+	gajiawal := c.FormValue("gajiawal")
+	gajiakhir := c.FormValue("gajiakhir")
+
+	ii, _ := strconv.Atoi(iduser)
+
+	result, err := models.UpdateUserDetailKerja(ii, kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}

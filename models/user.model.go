@@ -237,19 +237,19 @@ func UpdateEmailUser(iduser int, email string) (Response, error) {
 	return res, nil
 }
 
-func UpdatePassUser(iduser int, password string) (Response, error) {
+func UpdatePassUser(email string, password string) (Response, error) {
 	var res Response
 
 	con := db.CreateCon()
 
-	sqlStatement := "UPDATE userakun SET password=? WHERE iduser = ?"
+	sqlStatement := "UPDATE userakun SET password=? WHERE email = ?"
 
 	stmt, err := con.Prepare(sqlStatement)
 	if err != nil {
 		return res, err
 	}
 
-	result, err := stmt.Exec(password, iduser)
+	result, err := stmt.Exec(password, email)
 	if err != nil {
 		return res, err
 	}
@@ -700,6 +700,41 @@ func DataUserDetailProfileART(iduser int) (Response, error) {
 	return res, nil
 }
 
+func UpdateUserDetailProfileART(iduser int, pendidikanterakhir string, beratbadan int,
+	tinggibadan int, agama string, tkmenginap string, tkwarnen string, hewan string,
+	mabukjalan string, sepedamotor string, mobil string, masak string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "UPDATE detailprofileart SET pendidikanterakhir=?, beratbadan=?, tinggibadan=?, agama=?, tkmenginap=?, tkwarnen=?, hewan=?, mabukjalan=?, sepedamotor=?, mobil=?, masak=? WHERE iduser=?"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, iduser)
+	if err != nil {
+		return res, err
+	}
+
+	defer stmt.Close()
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"rowsAffected": rowsAffected,
+	}
+
+	return res, nil
+}
+
 type DetailKerjaART struct {
 	IdUser       int    `json:"iduser"`
 	KPrt         string `json:"kprt"`
@@ -768,7 +803,7 @@ func DataAllDetailKerjaART() (Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(&obj.IdUser, &obj.KPrt, &obj.KBabysitter,
-			&obj.KOfficeboy, &obj.KSupir, &obj.KOfficeboy,
+			&obj.KSeniorcare, &obj.KSupir, &obj.KOfficeboy,
 			&obj.KTukangkebun, &obj.Pengalaman,
 			&obj.GajiAwal, &obj.GajiAkhir)
 
@@ -826,41 +861,6 @@ func DataAllDetailKerjaART() (Response, error) {
 //	return res, nil
 //}
 
-func UpdateUserDetailProfileART(iduser int, pendidikanterakhir string, beratbadan int,
-	tinggibadan int, agama string, tkmenginap string, tkwarnen string, hewan string,
-	mabukjalan string, sepedamotor string, mobil string, masak string) (Response, error) {
-	var res Response
-
-	con := db.CreateCon()
-
-	sqlStatement := "UPDATE detailprofileart SET pendidikanterakhir=?, beratbadan=?, tinggibadan=?, agama=?, tkmenginap=?, tkwarnen=?, hewan=?, mabukjalan=?, sepedamotor=?, mobil=?, masak=?WHERE iduser=?"
-
-	stmt, err := con.Prepare(sqlStatement)
-	if err != nil {
-		return res, err
-	}
-
-	result, err := stmt.Exec(pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, iduser)
-	if err != nil {
-		return res, err
-	}
-
-	defer stmt.Close()
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return res, err
-	}
-
-	res.Status = http.StatusOK
-	res.Message = "Sukses"
-	res.Data = map[string]int64{
-		"rowsAffected": rowsAffected,
-	}
-
-	return res, nil
-}
-
 func DataUserDetailKerjaART(iduser int) (Response, error) {
 	var obj DetailKerjaART
 	var arrobj []DetailKerjaART
@@ -882,7 +882,7 @@ func DataUserDetailKerjaART(iduser int) (Response, error) {
 	for rows.Next() {
 		err = rows.Scan(
 			&obj.IdUser, &obj.KPrt, &obj.KBabysitter,
-			&obj.KOfficeboy, &obj.KSupir, &obj.KOfficeboy,
+			&obj.KSeniorcare, &obj.KSupir, &obj.KOfficeboy,
 			&obj.KTukangkebun, &obj.Pengalaman,
 			&obj.GajiAwal, &obj.GajiAkhir)
 
