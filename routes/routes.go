@@ -59,7 +59,8 @@ func Init() *echo.Echo {
 	// ===== LOWONGAN KERJA =====
 	e.POST("/addlowongankerja", controllers.SimpanLowonganKerja)
 	e.GET("/alldatalowongankerja", controllers.DataAllLowonganKerja)
-	e.GET("/datadetaillowongankerja", controllers.DataDetailLowonganKerja)
+	e.GET("/datalokerperuser", controllers.DataLowonganKerjaperUser)
+	e.PUT("/editlowongankerja", controllers.UpdateLowonganKerja)
 	e.POST("/addlokerselesai", controllers.SimpanLowonganKerjaSelesai)
 	e.DELETE("/deletelowongankerja", controllers.DeleteDetailLowonganKerja)
 	// === END ===

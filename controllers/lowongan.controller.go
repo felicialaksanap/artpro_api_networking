@@ -9,17 +9,23 @@ import (
 
 func SimpanLowonganKerja(c echo.Context) error {
 	iduser := c.FormValue("iduser")
-	kategori := c.FormValue("kategori")
-	informasi := c.FormValue("informasi")
-	uraiantugas := c.FormValue("uraiantugas")
-	keahlian := c.FormValue("keahlian")
-	tipekerja := c.FormValue("tipekerja")
+	judulloker := c.FormValue("judulloker")
 	gajiawal := c.FormValue("gajiawal")
 	gajiakhir := c.FormValue("gajiakhir")
+	informasi := c.FormValue("informasi")
+	tugas := c.FormValue("tugas")
+	kriteria := c.FormValue("kriteria")
+	kprt := c.FormValue("kprt")
+	kbabysitter := c.FormValue("kbabysitter")
+	kseniorcare := c.FormValue("kseniorcare")
+	ksupir := c.FormValue("ksupir")
+	kofficeboy := c.FormValue("kofficeboy")
+	ktukangkebun := c.FormValue("ktukangkebun")
+	tglpost := c.FormValue("tglpost")
 
 	ii, _ := strconv.Atoi(iduser)
 
-	result, err := models.SimpanLowonganKerja(ii, kategori, informasi, uraiantugas, keahlian, tipekerja, gajiawal, gajiakhir)
+	result, err := models.SimpanLowonganKerja(ii, judulloker, gajiawal, gajiakhir, informasi, tugas, kriteria, kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, tglpost)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -36,12 +42,12 @@ func DataAllLowonganKerja(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func DataDetailLowonganKerja(c echo.Context) error {
-	idloker := c.FormValue("idloker")
+func DataLowonganKerjaperUser(c echo.Context) error {
+	iduser := c.FormValue("iduser")
 
-	ii, _ := strconv.Atoi(idloker)
+	iu, _ := strconv.Atoi(iduser)
 
-	result, err := models.DataDetailLowonganKerja(ii)
+	result, err := models.DataLowonganKerjaperUser(iu)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -52,19 +58,51 @@ func DataDetailLowonganKerja(c echo.Context) error {
 func SimpanLowonganKerjaSelesai(c echo.Context) error {
 	idloker := c.FormValue("idloker")
 	iduser := c.FormValue("iduser")
-	kategori := c.FormValue("kategori")
-	informasi := c.FormValue("informasi")
-	uraiantugas := c.FormValue("uraiantugas")
-	keahlian := c.FormValue("keahlian")
-	tipekerja := c.FormValue("tipekerja")
+	judulloker := c.FormValue("judulloker")
 	gajiawal := c.FormValue("gajiawal")
 	gajiakhir := c.FormValue("gajiakhir")
+	informasi := c.FormValue("informasi")
+	tugas := c.FormValue("tugas")
+	kriteria := c.FormValue("kriteria")
+	kprt := c.FormValue("kprt")
+	kbabysitter := c.FormValue("kbabysitter")
+	kseniorcare := c.FormValue("kseniorcare")
+	ksupir := c.FormValue("ksupir")
+	kofficeboy := c.FormValue("kofficeboy")
+	ktukangkebun := c.FormValue("ktukangkebun")
+	tglpost := c.FormValue("tglpost")
 	alasan := c.FormValue("alasan")
 
 	ili, _ := strconv.Atoi(idloker)
 	ii, _ := strconv.Atoi(iduser)
 
-	result, err := models.SimpanLowonganKerjaSelesai(ili, ii, kategori, informasi, uraiantugas, keahlian, tipekerja, gajiawal, gajiakhir, alasan)
+	result, err := models.SimpanLowonganKerjaSelesai(ili, ii, judulloker, gajiawal, gajiakhir, informasi, tugas, kriteria, kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, tglpost, alasan)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateLowonganKerja(c echo.Context) error {
+	idloker := c.FormValue("idloker")
+	judulloker := c.FormValue("judulloker")
+	gajiawal := c.FormValue("gajiawal")
+	gajiakhir := c.FormValue("gajiakhir")
+	informasi := c.FormValue("informasi")
+	tugas := c.FormValue("tugas")
+	kriteria := c.FormValue("kriteria")
+	kprt := c.FormValue("kprt")
+	kbabysitter := c.FormValue("kbabysitter")
+	kseniorcare := c.FormValue("kseniorcare")
+	ksupir := c.FormValue("ksupir")
+	kofficeboy := c.FormValue("kofficeboy")
+	ktukangkebun := c.FormValue("ktukangkebun")
+	tglpost := c.FormValue("tglpost")
+
+	ili, _ := strconv.Atoi(idloker)
+
+	result, err := models.UpdateLowonganKerja(ili, judulloker, gajiawal, gajiakhir, informasi, tugas, kriteria, kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, tglpost)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
