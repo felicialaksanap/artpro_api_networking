@@ -822,44 +822,44 @@ func DataAllDetailKerjaART() (Response, error) {
 	return res, nil
 }
 
-//func DataListKerjaPerKategori(kategori string) (Response, error) {
-//	var obj DetailKerjaART
-//	var arrobj []DetailKerjaART
-//	var res Response
-//
-//	con := db.CreateCon()
-//
-//	sqlStatemet := "SELECT * FROM detailkerjaart WHERE kategori=?"
-//
-//	rows, err := con.Query(sqlStatemet, kategori)
-//
-//	defer rows.Close()
-//
-//	if err != nil {
-//		log.Printf(err.Error())
-//		return res, err
-//	}
-//
-//	for rows.Next() {
-//		err = rows.Scan(&obj.IdUser, &obj.KPrt, &obj.KBabysitter,
-//						&obj.KOfficeboy, &obj.KSupir, &obj.KOfficeboy,
-//						&obj.KTukangkebun, &obj.Pengalaman,
-//						&obj.GajiAwal, &obj.GajiAkhir)
-//
-//		if err != nil {
-//			log.Printf(err.Error())
-//			return res, err
-//		}
-//
-//		arrobj = append(arrobj, obj)
-//	}
-//	log.Printf("berhasil")
-//	res.Status = http.StatusOK
-//	res.Message = "Sukses"
-//	res.Data = arrobj
-//
-//	return res, nil
-//}
+func DataListKerjaPerKategori(kategori string) (Response, error) {
+	var obj DetailKerjaART
+	var arrobj []DetailKerjaART
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatemet := "SELECT * FROM detailkerjaart WHERE kategori=?"
+
+	rows, err := con.Query(sqlStatemet, kategori)
+
+	defer rows.Close()
+
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.IdUser, &obj.KPrt, &obj.KBabysitter,
+			&obj.KOfficeboy, &obj.KSupir, &obj.KOfficeboy,
+			&obj.KTukangkebun, &obj.Pengalaman,
+			&obj.GajiAwal, &obj.GajiAkhir)
+
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		arrobj = append(arrobj, obj)
+	}
+	log.Printf("berhasil")
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = arrobj
+
+	return res, nil
+}
 
 func DataUserDetailKerjaART(iduser int) (Response, error) {
 	var obj DetailKerjaART

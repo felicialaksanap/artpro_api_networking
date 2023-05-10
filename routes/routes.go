@@ -60,9 +60,10 @@ func Init() *echo.Echo {
 	e.POST("/addlowongankerja", controllers.SimpanLowonganKerja)
 	e.GET("/alldatalowongankerja", controllers.DataAllLowonganKerja)
 	e.GET("/datalokerperuser", controllers.DataLowonganKerjaperUser)
+	e.GET("/datalokerperid", controllers.DataLowonganKerjaperIdLoker)
+	e.PUT("/editstatusloker", controllers.UpdateStatusLoker)
 	e.PUT("/editlowongankerja", controllers.UpdateLowonganKerja)
-	e.POST("/addlokerselesai", controllers.SimpanLowonganKerjaSelesai)
-	e.DELETE("/deletelowongankerja", controllers.DeleteDetailLowonganKerja)
+	e.POST("/addlokerdetail", controllers.SimpanLowonganKerjaDetail)
 	// === END ===
 
 	// ===== KONTAK USER =====
