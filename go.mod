@@ -5,6 +5,7 @@ go 1.19
 require github.com/labstack/echo v3.3.10+incompatible
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/labstack/gommon v0.4.0 // indirect

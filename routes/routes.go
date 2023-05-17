@@ -3,12 +3,13 @@ package routes
 import (
 	"artpro_api_networking/controllers"
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"net/http"
 )
 
 func Init() *echo.Echo {
 	e := echo.New()
-
+	e.Use(middleware.CORSWithConfig(middleware.DefaultCORSConfig))
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Selamat Datang di Echo")
 	})
@@ -51,7 +52,7 @@ func Init() *echo.Echo {
 	// ===== DETAIL KERJA ART ======
 	e.POST("/addkerjaart", controllers.SimpanDetailKerjaART)
 	e.GET("/alldatadetailkerjaart", controllers.DataAllDetailKerjaART)
-	//e.GET("/datakerjaperkategori", controllers.DataListKerjaPerKategori)
+	e.GET("/datakerjaperkategori", controllers.DataListKerjaPerKategori)
 	e.GET("/datauserdetailkerjaart", controllers.DataUserDetailKerjaART)
 	e.PUT("/edituserdetailkerjaart", controllers.UpdateUserDetailKerja)
 	// ==== END ====
@@ -63,18 +64,20 @@ func Init() *echo.Echo {
 	e.GET("/datalokerperid", controllers.DataLowonganKerjaperIdLoker)
 	e.PUT("/editstatusloker", controllers.UpdateStatusLoker)
 	e.PUT("/editlowongankerja", controllers.UpdateLowonganKerja)
-	e.POST("/addlokerdetail", controllers.SimpanLowonganKerjaDetail)
 	// === END ===
 
-	// ===== KONTAK USER =====
+	// ===== KONTAK USER =====     // Majikan melakukan call ke ART
 	e.POST("/addkontakuser", controllers.SimpanKontakUser)
-	e.GET("/datalistkontakbymajikan", controllers.DataListKontakByMajikan)
-	e.GET("/datalistkontakbyart", controllers.DataListKontakByART)
+	e.GET("/gettotalkontakart", controllers.GetTotalKontakART)
+	//e.GET("/datalistkontakbymajikan", controllers.DataListKontakByMajikan)
+	//e.GET("/datalistkontakbyart", controllers.DataListKontakByART)
+
 	// ==== END ====
 
 	// ===== PENILAIAN =====
 	e.POST("/addpenilaian", controllers.SimpanPenilaian)
 	e.GET("/datapenilaianart", controllers.DataPenilaianART)
+	e.GET("/getavgnilaiart", controllers.GetAvgNilaiART)
 	// === END ===
 
 	// ===== SERTIFIKAT PELATIHAN =====

@@ -241,12 +241,23 @@ func SimpanDetailProfileART(c echo.Context) error {
 	sepedamotor := c.FormValue("sepedamotor")
 	mobil := c.FormValue("mobil")
 	masak := c.FormValue("masak")
+	ssingle := c.FormValue("ssingle")
+	smarried := c.FormValue("smarried")
 
 	ii, _ := strconv.Atoi(iduser)
 	bbi, _ := strconv.Atoi(beratbadan)
 	tti, _ := strconv.Atoi(tinggibadan)
+	tmi, _ := strconv.Atoi(tkmenginap)
+	twi, _ := strconv.Atoi(tkwarnen)
+	hi, _ := strconv.Atoi(hewan)
+	mji, _ := strconv.Atoi(mabukjalan)
+	spmi, _ := strconv.Atoi(sepedamotor)
+	mbi, _ := strconv.Atoi(mobil)
+	mi, _ := strconv.Atoi(masak)
+	si, _ := strconv.Atoi(ssingle)
+	smi, _ := strconv.Atoi(smarried)
 
-	result, err := models.SimpanDetailProfileART(ii, pendidikanterakhir, bbi, tti, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak)
+	result, err := models.SimpanDetailProfileART(ii, pendidikanterakhir, bbi, tti, agama, tmi, twi, hi, mji, spmi, mbi, mi, si, smi)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -280,12 +291,23 @@ func UpdateUserDetailProfileART(c echo.Context) error {
 	sepedamotor := c.FormValue("sepedamotor")
 	mobil := c.FormValue("mobil")
 	masak := c.FormValue("masak")
+	ssingle := c.FormValue("ssingle")
+	smarried := c.FormValue("smarried")
 
 	ii, _ := strconv.Atoi(iduser)
 	bi, _ := strconv.Atoi(beratbadan)
 	ti, _ := strconv.Atoi(tinggibadan)
+	tmi, _ := strconv.Atoi(tkmenginap)
+	twi, _ := strconv.Atoi(tkwarnen)
+	hi, _ := strconv.Atoi(hewan)
+	mji, _ := strconv.Atoi(mabukjalan)
+	spmi, _ := strconv.Atoi(sepedamotor)
+	mbi, _ := strconv.Atoi(mobil)
+	mi, _ := strconv.Atoi(masak)
+	si, _ := strconv.Atoi(ssingle)
+	smi, _ := strconv.Atoi(smarried)
 
-	result, err := models.UpdateUserDetailProfileART(ii, pendidikanterakhir, bi, ti, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak)
+	result, err := models.UpdateUserDetailProfileART(ii, pendidikanterakhir, bi, ti, agama, tmi, twi, hi, mji, spmi, mbi, mi, si, smi)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -306,8 +328,14 @@ func SimpanDetailKerjaART(c echo.Context) error {
 	gajiakhir := c.FormValue("gajiakhir")
 
 	ii, _ := strconv.Atoi(iduser)
+	kpi, _ := strconv.Atoi(kprt)
+	kbi, _ := strconv.Atoi(kbabysitter)
+	ksci, _ := strconv.Atoi(kseniorcare)
+	ksi, _ := strconv.Atoi(ksupir)
+	kobi, _ := strconv.Atoi(kofficeboy)
+	ktki, _ := strconv.Atoi(ktukangkebun)
 
-	result, err := models.SimpanDetailKerjaART(ii, kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir)
+	result, err := models.SimpanDetailKerjaART(ii, kpi, kbi, ksci, ksi, kobi, ktki, pengalaman, gajiawal, gajiakhir)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -324,16 +352,16 @@ func DataAllDetailKerjaART(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-//func DataListKerjaPerKategori(c echo.Context) error {
-//	kategori := c.FormValue("kategori")
-//
-//	result, err := models.DataListKerjaPerKategori(kategori)
-//	if err != nil {
-//		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-//	}
-//
-//	return c.JSON(http.StatusOK, result)
-//}
+func DataListKerjaPerKategori(c echo.Context) error {
+	kategori := c.FormValue("kategori")
+
+	result, err := models.DataListKerjaPerKategori(kategori)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
 
 func DataUserDetailKerjaART(c echo.Context) error {
 	iduser := c.FormValue("iduser")
@@ -360,8 +388,27 @@ func UpdateUserDetailKerja(c echo.Context) error {
 	gajiakhir := c.FormValue("gajiakhir")
 
 	ii, _ := strconv.Atoi(iduser)
+	kpi, _ := strconv.Atoi(kprt)
+	kbi, _ := strconv.Atoi(kbabysitter)
+	ksci, _ := strconv.Atoi(kseniorcare)
+	ksi, _ := strconv.Atoi(ksupir)
+	kobi, _ := strconv.Atoi(kofficeboy)
+	ktki, _ := strconv.Atoi(ktukangkebun)
 
-	result, err := models.UpdateUserDetailKerja(ii, kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir)
+	result, err := models.UpdateUserDetailKerja(ii, kpi, kbi, ksci, ksi, kobi, ktki, pengalaman, gajiawal, gajiakhir)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func GetTotalKontakART(c echo.Context) error {
+	idart := c.FormValue("idart")
+
+	ii, _ := strconv.Atoi(idart)
+
+	result, err := models.GetTotalKontakART(ii)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -373,12 +420,11 @@ func SimpanKontakUser(c echo.Context) error {
 	idmajikan := c.FormValue("idmajikan")
 	idart := c.FormValue("idart")
 	waktukontak := c.FormValue("waktukontak")
-	darimana := c.FormValue("darimana")
 
 	imi, _ := strconv.Atoi(idmajikan)
 	iai, _ := strconv.Atoi(idart)
 
-	result, err := models.SimpanKontakuser(imi, iai, waktukontak, darimana)
+	result, err := models.SimpanKontakuser(imi, iai, waktukontak)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -386,40 +432,41 @@ func SimpanKontakUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func DataListKontakByMajikan(c echo.Context) error {
-	idmajikan := c.FormValue("idmajikan")
-
-	ii, _ := strconv.Atoi(idmajikan)
-
-	result, err := models.DataListKontakByMajikan(ii)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, result)
-}
-
-func DataListKontakByART(c echo.Context) error {
-	idart := c.FormValue("idart")
-
-	ii, _ := strconv.Atoi(idart)
-
-	result, err := models.DataListKontakByART(ii)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, result)
-}
+//func DataListKontakByMajikan(c echo.Context) error {
+//	idmajikan := c.FormValue("idmajikan")
+//
+//	ii, _ := strconv.Atoi(idmajikan)
+//
+//	result, err := models.DataListKontakByMajikan(ii)
+//	if err != nil {
+//		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+//	}
+//
+//	return c.JSON(http.StatusOK, result)
+//}
+//
+//func DataListKontakByART(c echo.Context) error {
+//	idart := c.FormValue("idart")
+//
+//	ii, _ := strconv.Atoi(idart)
+//
+//	result, err := models.DataListKontakByART(ii)
+//	if err != nil {
+//		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+//	}
+//
+//	return c.JSON(http.StatusOK, result)
+//}
 
 func SimpanPenilaian(c echo.Context) error {
 	idart := c.FormValue("idart")
 	idmajikan := c.FormValue("idmajikan")
-	etika := c.FormValue("etika")
 	estetika := c.FormValue("estetika")
+	etika := c.FormValue("etika")
 	kebersihan := c.FormValue("kebersihan")
-	kerapian := c.FormValue("kerapian")
 	kecepatan := c.FormValue("kecepatan")
+	kerapian := c.FormValue("kerapian")
+	avgnilai := c.FormValue("avgnilai")
 	review := c.FormValue("review")
 
 	iai, _ := strconv.Atoi(idart)
@@ -429,8 +476,9 @@ func SimpanPenilaian(c echo.Context) error {
 	ki, _ := strconv.Atoi(kebersihan)
 	kri, _ := strconv.Atoi(kerapian)
 	kci, _ := strconv.Atoi(kecepatan)
+	ai, _ := strconv.ParseFloat(avgnilai, 64)
 
-	result, err := models.SimpanPenilaian(iai, imi, ei, esi, ki, kri, kci, review)
+	result, err := models.SimpanPenilaian(iai, imi, ei, esi, ki, kri, kci, ai, review)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -444,6 +492,19 @@ func DataPenilaianART(c echo.Context) error {
 	ii, _ := strconv.Atoi(idart)
 
 	result, err := models.DataPenilaianART(ii)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func GetAvgNilaiART(c echo.Context) error {
+	idart := c.FormValue("idart")
+
+	ii, _ := strconv.Atoi(idart)
+
+	result, err := models.GetAvgNilaiART(ii)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
