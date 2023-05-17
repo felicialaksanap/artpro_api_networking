@@ -68,7 +68,7 @@ func Init() *echo.Echo {
 
 	// ===== KONTAK USER =====     // Majikan melakukan call ke ART
 	e.POST("/addkontakuser", controllers.SimpanKontakUser)
-	e.GET("/gettotalkontakart", controllers.GetTotalKontakART)
+	//e.GET("/gettotalkontakart", controllers.GetTotalKontakART)
 	//e.GET("/datalistkontakbymajikan", controllers.DataListKontakByMajikan)
 	//e.GET("/datalistkontakbyart", controllers.DataListKontakByART)
 
@@ -77,7 +77,7 @@ func Init() *echo.Echo {
 	// ===== PENILAIAN =====
 	e.POST("/addpenilaian", controllers.SimpanPenilaian)
 	e.GET("/datapenilaianart", controllers.DataPenilaianART)
-	e.GET("/getavgnilaiart", controllers.GetAvgNilaiART)
+	e.GET("/getratingart", controllers.GetRatingART)
 	// === END ===
 
 	// ===== SERTIFIKAT PELATIHAN =====

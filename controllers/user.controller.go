@@ -403,18 +403,18 @@ func UpdateUserDetailKerja(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func GetTotalKontakART(c echo.Context) error {
-	idart := c.FormValue("idart")
-
-	ii, _ := strconv.Atoi(idart)
-
-	result, err := models.GetTotalKontakART(ii)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, result)
-}
+//func GetTotalKontakART(c echo.Context) error {
+//	idart := c.FormValue("idart")
+//
+//	ii, _ := strconv.Atoi(idart)
+//
+//	result, err := models.GetTotalKontakART(ii)
+//	if err != nil {
+//		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+//	}
+//
+//	return c.JSON(http.StatusOK, result)
+//}
 
 func SimpanKontakUser(c echo.Context) error {
 	idmajikan := c.FormValue("idmajikan")
@@ -466,7 +466,7 @@ func SimpanPenilaian(c echo.Context) error {
 	kebersihan := c.FormValue("kebersihan")
 	kecepatan := c.FormValue("kecepatan")
 	kerapian := c.FormValue("kerapian")
-	avgnilai := c.FormValue("avgnilai")
+	rating := c.FormValue("rating")
 	review := c.FormValue("review")
 
 	iai, _ := strconv.Atoi(idart)
@@ -476,9 +476,9 @@ func SimpanPenilaian(c echo.Context) error {
 	ki, _ := strconv.Atoi(kebersihan)
 	kri, _ := strconv.Atoi(kerapian)
 	kci, _ := strconv.Atoi(kecepatan)
-	ai, _ := strconv.ParseFloat(avgnilai, 64)
+	ri, _ := strconv.ParseFloat(rating, 64)
 
-	result, err := models.SimpanPenilaian(iai, imi, ei, esi, ki, kri, kci, ai, review)
+	result, err := models.SimpanPenilaian(iai, imi, ei, esi, ki, kri, kci, ri, review)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -499,12 +499,12 @@ func DataPenilaianART(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func GetAvgNilaiART(c echo.Context) error {
+func GetRatingART(c echo.Context) error {
 	idart := c.FormValue("idart")
 
 	ii, _ := strconv.Atoi(idart)
 
-	result, err := models.GetAvgNilaiART(ii)
+	result, err := models.GetRatingART(ii)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}

@@ -1083,47 +1083,47 @@ func UpdateUserDetailKerja(iduser int, kprt int, kbabysitter int,
 //	WaktuKontak string `json:"waktukontak"`
 //	Darimana    string `json:"darimana"`
 //}
-
-type TotalKontakART struct {
-	IdART          int `json:"idart"`
-	TotalKontakART int `json:"totalkontakart"`
-}
-
-func GetTotalKontakART(idart int) (Response, error) {
-	var obj TotalKontakART
-	var arrobj []TotalKontakART
-	var res Response
-
-	con := db.CreateCon()
-
-	sqlStatemet := "SELECT idart, COUNT(idmajikan) as totalkontak FROM kontakart WHERE idart = ?"
-
-	rows, err := con.Query(sqlStatemet, idart)
-
-	defer rows.Close()
-
-	if err != nil {
-		log.Printf(err.Error())
-		return res, err
-	}
-
-	for rows.Next() {
-		err = rows.Scan(&obj.IdART, &obj.TotalKontakART)
-
-		if err != nil {
-			log.Printf(err.Error())
-			return res, err
-		}
-
-		arrobj = append(arrobj, obj)
-	}
-	log.Printf("berhasil")
-	res.Status = http.StatusOK
-	res.Message = "Sukses"
-	res.Data = arrobj
-
-	return res, nil
-}
+//
+//type TotalKontakART struct {
+//	IdART          int `json:"idart"`
+//	TotalKontakART int `json:"totalkontakart"`
+//}
+//
+//func GetTotalKontakART(idart int) (Response, error) {
+//	var obj TotalKontakART
+//	var arrobj []TotalKontakART
+//	var res Response
+//
+//	con := db.CreateCon()
+//
+//	sqlStatemet := "SELECT idart, COUNT(idmajikan) as totalkontak FROM kontakart WHERE idart = ?"
+//
+//	rows, err := con.Query(sqlStatemet, idart)
+//
+//	defer rows.Close()
+//
+//	if err != nil {
+//		log.Printf(err.Error())
+//		return res, err
+//	}
+//
+//	for rows.Next() {
+//		err = rows.Scan(&obj.IdART, &obj.TotalKontakART)
+//
+//		if err != nil {
+//			log.Printf(err.Error())
+//			return res, err
+//		}
+//
+//		arrobj = append(arrobj, obj)
+//	}
+//	log.Printf("berhasil")
+//	res.Status = http.StatusOK
+//	res.Message = "Sukses"
+//	res.Data = arrobj
+//
+//	return res, nil
+//}
 
 func SimpanKontakuser(idmajikan int, idart int, waktukontak string) (Response, error) {
 	var res Response
@@ -1241,19 +1241,19 @@ type Penilaian struct {
 }
 
 func SimpanPenilaian(idart int, idmajikan int, etika int, estetika int,
-	kebersihan int, kerapian int, kecepatan int, avgnilai float64, review string) (Response, error) {
+	kebersihan int, kerapian int, kecepatan int, rating float64, review string) (Response, error) {
 	var res Response
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO penilaian (idart, idmajikan, estetika, etika, kebersihan, kecepatan, kerapian, avgnilai, review) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	sqlStatement := "INSERT INTO penilaian (idart, idmajikan, estetika, etika, kebersihan, kecepatan, kerapian, rating, review) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
 	stmt, err := con.Prepare(sqlStatement)
 	if err != nil {
 		return res, err
 	}
 
-	result, err := stmt.Exec(idart, idmajikan, estetika, etika, kebersihan, kecepatan, kerapian, avgnilai, review)
+	result, err := stmt.Exec(idart, idmajikan, estetika, etika, kebersihan, kecepatan, kerapian, rating, review)
 	if err != nil {
 		return res, err
 	}
@@ -1312,19 +1312,19 @@ func DataPenilaianART(idart int) (Response, error) {
 	return res, nil
 }
 
-type AvgART struct {
-	IdART   int     `json:"idart"`
-	Average float64 `json:"average"`
+type Rating struct {
+	IdART  int     `json:"idart"`
+	Rating float64 `json:"rating"`
 }
 
-func GetAvgNilaiART(idart int) (Response, error) {
-	var obj AvgART
-	var arrobj []AvgART
+func GetRatingART(idart int) (Response, error) {
+	var obj Rating
+	var arrobj []Rating
 	var res Response
 
 	con := db.CreateCon()
 
-	sqlStatemet := "SELECT idart, AVG(avgnilai) as average FROM penilaian WHERE idart = ?"
+	sqlStatemet := "SELECT idart, rating FROM penilaian WHERE idart = ?"
 
 	rows, err := con.Query(sqlStatemet, idart)
 
@@ -1336,7 +1336,7 @@ func GetAvgNilaiART(idart int) (Response, error) {
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&obj.IdART, &obj.Average)
+		err = rows.Scan(&obj.IdART, &obj.Rating)
 
 		if err != nil {
 			log.Printf(err.Error())
