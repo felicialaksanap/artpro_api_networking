@@ -352,10 +352,10 @@ func DataAllDetailKerjaART(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func DataListKerjaPerKategori(c echo.Context) error {
+func DataARTbyKategori(c echo.Context) error {
 	kategori := c.FormValue("kategori")
 
-	result, err := models.DataListKerjaPerKategori(kategori)
+	result, err := models.DataARTbyKategori(kategori)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -403,19 +403,6 @@ func UpdateUserDetailKerja(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-//func GetTotalKontakART(c echo.Context) error {
-//	idart := c.FormValue("idart")
-//
-//	ii, _ := strconv.Atoi(idart)
-//
-//	result, err := models.GetTotalKontakART(ii)
-//	if err != nil {
-//		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-//	}
-//
-//	return c.JSON(http.StatusOK, result)
-//}
-
 func SimpanKontakUser(c echo.Context) error {
 	idmajikan := c.FormValue("idmajikan")
 	idart := c.FormValue("idart")
@@ -432,32 +419,6 @@ func SimpanKontakUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-//func DataListKontakByMajikan(c echo.Context) error {
-//	idmajikan := c.FormValue("idmajikan")
-//
-//	ii, _ := strconv.Atoi(idmajikan)
-//
-//	result, err := models.DataListKontakByMajikan(ii)
-//	if err != nil {
-//		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-//	}
-//
-//	return c.JSON(http.StatusOK, result)
-//}
-//
-//func DataListKontakByART(c echo.Context) error {
-//	idart := c.FormValue("idart")
-//
-//	ii, _ := strconv.Atoi(idart)
-//
-//	result, err := models.DataListKontakByART(ii)
-//	if err != nil {
-//		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-//	}
-//
-//	return c.JSON(http.StatusOK, result)
-//}
-
 func SimpanPenilaian(c echo.Context) error {
 	idart := c.FormValue("idart")
 	idmajikan := c.FormValue("idmajikan")
@@ -468,6 +429,7 @@ func SimpanPenilaian(c echo.Context) error {
 	kerapian := c.FormValue("kerapian")
 	rating := c.FormValue("rating")
 	review := c.FormValue("review")
+	tglpost := c.FormValue("tglpost")
 
 	iai, _ := strconv.Atoi(idart)
 	imi, _ := strconv.Atoi(idmajikan)
@@ -478,7 +440,7 @@ func SimpanPenilaian(c echo.Context) error {
 	kci, _ := strconv.Atoi(kecepatan)
 	ri, _ := strconv.ParseFloat(rating, 64)
 
-	result, err := models.SimpanPenilaian(iai, imi, ei, esi, ki, kri, kci, ri, review)
+	result, err := models.SimpanPenilaian(iai, imi, ei, esi, ki, kri, kci, ri, review, tglpost)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -486,12 +448,12 @@ func SimpanPenilaian(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func DataPenilaianART(c echo.Context) error {
+func RataPenilaianART(c echo.Context) error {
 	idart := c.FormValue("idart")
 
 	ii, _ := strconv.Atoi(idart)
 
-	result, err := models.DataPenilaianART(ii)
+	result, err := models.RataPenilaianART(ii)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -499,12 +461,12 @@ func DataPenilaianART(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func GetRatingART(c echo.Context) error {
+func DataReviewMajikan(c echo.Context) error {
 	idart := c.FormValue("idart")
 
 	ii, _ := strconv.Atoi(idart)
 
-	result, err := models.GetRatingART(ii)
+	result, err := models.DataReviewMajikan(ii)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}

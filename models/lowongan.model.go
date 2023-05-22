@@ -46,14 +46,14 @@ func SimpanLowonganKerja(iduser int, judulloker string, gajiawal string, gajiakh
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO lowongankerja (iduser, judulloker, gajiawal, gajiakhir, informasi, tugas, kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, hewan, masak, mabukjalan, sepedamotor, mobil, tkmenginap, tkwarnen, tglpost, statusloker) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,?)"
+	sqlStatement := "INSERT INTO lowongankerja (iduser, judulloker, gajiawal, gajiakhir, informasi, tugas, kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, hewan, masak, mabukjalan, sepedamotor, mobil, tkmenginap, tkwarnen, ssingle, smarried, tglpost, statusloker) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,?, ?, ? )"
 
 	stmt, err := con.Prepare(sqlStatement)
 	if err != nil {
 		return res, err
 	}
 
-	result, err := stmt.Exec(iduser, judulloker, gajiawal, gajiakhir, informasi, tugas, kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, hewan, masak, mabukjalan, sepedamotor, mobil, tkmenginap, tkwarnen, tglpost, statusloker)
+	result, err := stmt.Exec(iduser, judulloker, gajiawal, gajiakhir, informasi, tugas, kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, hewan, masak, mabukjalan, sepedamotor, mobil, tkmenginap, tkwarnen, ssingle, smarried, tglpost, statusloker)
 	if err != nil {
 		return res, err
 	}

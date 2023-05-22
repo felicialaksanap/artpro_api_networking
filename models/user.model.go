@@ -827,15 +827,48 @@ func DataAllDetailKerjaART() (Response, error) {
 	return res, nil
 }
 
-func DataListKerjaPerKategori(kategori string) (Response, error) {
-	var obj DetailKerjaART
-	var arrobj []DetailKerjaART
+type DatabyKategori struct {
+	IdART        int     `json:"idart"`
+	NamaLengkap  string  `json:"namalengkap"`
+	JenisKelamin string  `json:"jeniskelamin"`
+	TempatLahir  string  `json:"tempatlahir"`
+	TanggalLahir string  `json:"tanggallahir"`
+	Telephone    string  `json:"telephone"`
+	ProfPicPath  string  `json:"profpicpath"`
+	Pendidikan   string  `json:"pendidikan"`
+	BeratBadan   int     `json:"beratbadan"`
+	TinggiBadan  int     `json:"tinggibadan"`
+	Agama        string  `json:"agama"`
+	TkMenginap   int     `json:"tkmenginap"`
+	TkWarnen     int     `json:"tkwarnen"`
+	Hewan        int     `json:"hewan"`
+	MabukJalan   int     `json:"mabukjalan"`
+	SepedaMotor  int     `json:"sepedamotor"`
+	Mobil        int     `json:"mobil"`
+	Masak        int     `json:"masak"`
+	SSingle      int     `json:"ssingle"`
+	SMarried     int     `json:"smarried"`
+	KPrt         int     `json:"kprt"`
+	KBabySitter  int     `json:"kbabysitter"`
+	KSeniorCare  int     `json:"kseniorcare"`
+	KSupir       int     `json:"ksupir"`
+	KOfficeBoy   int     `json:"kofficeboy"`
+	KTukangKebun int     `json:"ktukangkebun"`
+	Pengalaman   string  `json:"pengalaman"`
+	GajiAwal     string  `json:"gajiawal"`
+	GajiAkhir    string  `json:"gajiakhir"`
+	Rating       float64 `json:"rating"`
+}
+
+func DataARTbyKategori(kategori string) (Response, error) {
+	var obj DatabyKategori
+	var arrobj []DatabyKategori
 	var res Response
 
 	con := db.CreateCon()
 
 	if kategori == "prt" {
-		sqlStatemet := "SELECT * FROM detailkerjaart WHERE kprt=1"
+		sqlStatemet := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, dka.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir, AVG(p.rating) as rating FROM userprofile up JOIN detailprofileart dpa on up.iduser = dpa.iduser JOIN detailkerjaart dka on up.iduser = dka.iduser JOIN penilaian p on up.iduser = p.idart WHERE kprt = 1 GROUP BY idart ORDER BY rating DESC"
 
 		rows, err := con.Query(sqlStatemet)
 		defer rows.Close()
@@ -845,10 +878,13 @@ func DataListKerjaPerKategori(kategori string) (Response, error) {
 		}
 
 		for rows.Next() {
-			err = rows.Scan(&obj.IdUser, &obj.KPrt, &obj.KBabysitter,
-				&obj.KOfficeboy, &obj.KSupir, &obj.KOfficeboy,
-				&obj.KTukangkebun, &obj.Pengalaman,
-				&obj.GajiAwal, &obj.GajiAkhir)
+			err = rows.Scan(&obj.IdART, &obj.NamaLengkap, &obj.JenisKelamin, &obj.TempatLahir,
+				&obj.TanggalLahir, &obj.Telephone, &obj.ProfPicPath, &obj.Pendidikan,
+				&obj.BeratBadan, &obj.TinggiBadan, &obj.Agama, &obj.TkMenginap,
+				&obj.TkWarnen, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
+				&obj.Masak, &obj.SSingle, &obj.SMarried, &obj.KPrt, &obj.KBabySitter,
+				&obj.KSeniorCare, &obj.KSupir, &obj.KOfficeBoy, &obj.KTukangKebun,
+				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Rating)
 
 			if err != nil {
 				log.Printf(err.Error())
@@ -862,7 +898,7 @@ func DataListKerjaPerKategori(kategori string) (Response, error) {
 		res.Message = "Sukses"
 		res.Data = arrobj
 	} else if kategori == "babysitter" {
-		sqlStatemet := "SELECT * FROM detailkerjaart WHERE kbabysitter=1"
+		sqlStatemet := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, dka.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir, AVG(p.rating) as rating FROM userprofile up JOIN detailprofileart dpa on up.iduser = dpa.iduser JOIN detailkerjaart dka on up.iduser = dka.iduser JOIN penilaian p on up.iduser = p.idart WHERE kbabysitter = 1 GROUP BY idart ORDER BY rating DESC"
 
 		rows, err := con.Query(sqlStatemet)
 		defer rows.Close()
@@ -872,10 +908,13 @@ func DataListKerjaPerKategori(kategori string) (Response, error) {
 		}
 
 		for rows.Next() {
-			err = rows.Scan(&obj.IdUser, &obj.KPrt, &obj.KBabysitter,
-				&obj.KOfficeboy, &obj.KSupir, &obj.KOfficeboy,
-				&obj.KTukangkebun, &obj.Pengalaman,
-				&obj.GajiAwal, &obj.GajiAkhir)
+			err = rows.Scan(&obj.IdART, &obj.NamaLengkap, &obj.JenisKelamin, &obj.TempatLahir,
+				&obj.TanggalLahir, &obj.Telephone, &obj.ProfPicPath, &obj.Pendidikan,
+				&obj.BeratBadan, &obj.TinggiBadan, &obj.Agama, &obj.TkMenginap,
+				&obj.TkWarnen, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
+				&obj.Masak, &obj.SSingle, &obj.SMarried, &obj.KPrt, &obj.KBabySitter,
+				&obj.KSeniorCare, &obj.KSupir, &obj.KOfficeBoy, &obj.KTukangKebun,
+				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Rating)
 
 			if err != nil {
 				log.Printf(err.Error())
@@ -889,7 +928,7 @@ func DataListKerjaPerKategori(kategori string) (Response, error) {
 		res.Message = "Sukses"
 		res.Data = arrobj
 	} else if kategori == "seniorcare" {
-		sqlStatemet := "SELECT * FROM detailkerjaart WHERE kseniorcare=1"
+		sqlStatemet := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, dka.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir, AVG(p.rating) as rating FROM userprofile up JOIN detailprofileart dpa on up.iduser = dpa.iduser JOIN detailkerjaart dka on up.iduser = dka.iduser JOIN penilaian p on up.iduser = p.idart WHERE kseniorcare = 1 GROUP BY idart ORDER BY rating DESC"
 
 		rows, err := con.Query(sqlStatemet)
 		defer rows.Close()
@@ -899,10 +938,13 @@ func DataListKerjaPerKategori(kategori string) (Response, error) {
 		}
 
 		for rows.Next() {
-			err = rows.Scan(&obj.IdUser, &obj.KPrt, &obj.KBabysitter,
-				&obj.KOfficeboy, &obj.KSupir, &obj.KOfficeboy,
-				&obj.KTukangkebun, &obj.Pengalaman,
-				&obj.GajiAwal, &obj.GajiAkhir)
+			err = rows.Scan(&obj.IdART, &obj.NamaLengkap, &obj.JenisKelamin, &obj.TempatLahir,
+				&obj.TanggalLahir, &obj.Telephone, &obj.ProfPicPath, &obj.Pendidikan,
+				&obj.BeratBadan, &obj.TinggiBadan, &obj.Agama, &obj.TkMenginap,
+				&obj.TkWarnen, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
+				&obj.Masak, &obj.SSingle, &obj.SMarried, &obj.KPrt, &obj.KBabySitter,
+				&obj.KSeniorCare, &obj.KSupir, &obj.KOfficeBoy, &obj.KTukangKebun,
+				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Rating)
 
 			if err != nil {
 				log.Printf(err.Error())
@@ -916,7 +958,7 @@ func DataListKerjaPerKategori(kategori string) (Response, error) {
 		res.Message = "Sukses"
 		res.Data = arrobj
 	} else if kategori == "supir" {
-		sqlStatemet := "SELECT * FROM detailkerjaart WHERE ksupir=1"
+		sqlStatemet := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, dka.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir, AVG(p.rating) as rating FROM userprofile up JOIN detailprofileart dpa on up.iduser = dpa.iduser JOIN detailkerjaart dka on up.iduser = dka.iduser JOIN penilaian p on up.iduser = p.idart WHERE ksupir = 1 GROUP BY idart ORDER BY rating DESC"
 
 		rows, err := con.Query(sqlStatemet)
 		defer rows.Close()
@@ -926,10 +968,13 @@ func DataListKerjaPerKategori(kategori string) (Response, error) {
 		}
 
 		for rows.Next() {
-			err = rows.Scan(&obj.IdUser, &obj.KPrt, &obj.KBabysitter,
-				&obj.KOfficeboy, &obj.KSupir, &obj.KOfficeboy,
-				&obj.KTukangkebun, &obj.Pengalaman,
-				&obj.GajiAwal, &obj.GajiAkhir)
+			err = rows.Scan(&obj.IdART, &obj.NamaLengkap, &obj.JenisKelamin, &obj.TempatLahir,
+				&obj.TanggalLahir, &obj.Telephone, &obj.ProfPicPath, &obj.Pendidikan,
+				&obj.BeratBadan, &obj.TinggiBadan, &obj.Agama, &obj.TkMenginap,
+				&obj.TkWarnen, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
+				&obj.Masak, &obj.SSingle, &obj.SMarried, &obj.KPrt, &obj.KBabySitter,
+				&obj.KSeniorCare, &obj.KSupir, &obj.KOfficeBoy, &obj.KTukangKebun,
+				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Rating)
 
 			if err != nil {
 				log.Printf(err.Error())
@@ -943,7 +988,7 @@ func DataListKerjaPerKategori(kategori string) (Response, error) {
 		res.Message = "Sukses"
 		res.Data = arrobj
 	} else if kategori == "officeboy" {
-		sqlStatemet := "SELECT * FROM detailkerjaart WHERE kofficeboy=1"
+		sqlStatemet := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, dka.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir, AVG(p.rating) as rating FROM userprofile up JOIN detailprofileart dpa on up.iduser = dpa.iduser JOIN detailkerjaart dka on up.iduser = dka.iduser JOIN penilaian p on up.iduser = p.idart WHERE kofficeboy = 1 GROUP BY idart ORDER BY rating DESC"
 
 		rows, err := con.Query(sqlStatemet)
 		defer rows.Close()
@@ -953,10 +998,13 @@ func DataListKerjaPerKategori(kategori string) (Response, error) {
 		}
 
 		for rows.Next() {
-			err = rows.Scan(&obj.IdUser, &obj.KPrt, &obj.KBabysitter,
-				&obj.KOfficeboy, &obj.KSupir, &obj.KOfficeboy,
-				&obj.KTukangkebun, &obj.Pengalaman,
-				&obj.GajiAwal, &obj.GajiAkhir)
+			err = rows.Scan(&obj.IdART, &obj.NamaLengkap, &obj.JenisKelamin, &obj.TempatLahir,
+				&obj.TanggalLahir, &obj.Telephone, &obj.ProfPicPath, &obj.Pendidikan,
+				&obj.BeratBadan, &obj.TinggiBadan, &obj.Agama, &obj.TkMenginap,
+				&obj.TkWarnen, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
+				&obj.Masak, &obj.SSingle, &obj.SMarried, &obj.KPrt, &obj.KBabySitter,
+				&obj.KSeniorCare, &obj.KSupir, &obj.KOfficeBoy, &obj.KTukangKebun,
+				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Rating)
 
 			if err != nil {
 				log.Printf(err.Error())
@@ -970,7 +1018,7 @@ func DataListKerjaPerKategori(kategori string) (Response, error) {
 		res.Message = "Sukses"
 		res.Data = arrobj
 	} else if kategori == "tukangkebun" {
-		sqlStatemet := "SELECT * FROM detailkerjaart WHERE ktukangkebun=1"
+		sqlStatemet := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, dka.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir, AVG(p.rating) as rating FROM userprofile up JOIN detailprofileart dpa on up.iduser = dpa.iduser JOIN detailkerjaart dka on up.iduser = dka.iduser JOIN penilaian p on up.iduser = p.idart WHERE ktukangkebun = 1 GROUP BY idart ORDER BY rating DESC"
 
 		rows, err := con.Query(sqlStatemet)
 		defer rows.Close()
@@ -980,10 +1028,13 @@ func DataListKerjaPerKategori(kategori string) (Response, error) {
 		}
 
 		for rows.Next() {
-			err = rows.Scan(&obj.IdUser, &obj.KPrt, &obj.KBabysitter,
-				&obj.KOfficeboy, &obj.KSupir, &obj.KOfficeboy,
-				&obj.KTukangkebun, &obj.Pengalaman,
-				&obj.GajiAwal, &obj.GajiAkhir)
+			err = rows.Scan(&obj.IdART, &obj.NamaLengkap, &obj.JenisKelamin, &obj.TempatLahir,
+				&obj.TanggalLahir, &obj.Telephone, &obj.ProfPicPath, &obj.Pendidikan,
+				&obj.BeratBadan, &obj.TinggiBadan, &obj.Agama, &obj.TkMenginap,
+				&obj.TkWarnen, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
+				&obj.Masak, &obj.SSingle, &obj.SMarried, &obj.KPrt, &obj.KBabySitter,
+				&obj.KSeniorCare, &obj.KSupir, &obj.KOfficeBoy, &obj.KTukangKebun,
+				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Rating)
 
 			if err != nil {
 				log.Printf(err.Error())
@@ -1076,55 +1127,6 @@ func UpdateUserDetailKerja(iduser int, kprt int, kbabysitter int,
 	return res, nil
 }
 
-//type KontakUser struct {
-//	IdKontak    int    `json:"idkontak"`
-//	IdMajikan   int    `json:"idmajikan"`
-//	IdART       int    `json:"idart"`
-//	WaktuKontak string `json:"waktukontak"`
-//	Darimana    string `json:"darimana"`
-//}
-//
-//type TotalKontakART struct {
-//	IdART          int `json:"idart"`
-//	TotalKontakART int `json:"totalkontakart"`
-//}
-//
-//func GetTotalKontakART(idart int) (Response, error) {
-//	var obj TotalKontakART
-//	var arrobj []TotalKontakART
-//	var res Response
-//
-//	con := db.CreateCon()
-//
-//	sqlStatemet := "SELECT idart, COUNT(idmajikan) as totalkontak FROM kontakart WHERE idart = ?"
-//
-//	rows, err := con.Query(sqlStatemet, idart)
-//
-//	defer rows.Close()
-//
-//	if err != nil {
-//		log.Printf(err.Error())
-//		return res, err
-//	}
-//
-//	for rows.Next() {
-//		err = rows.Scan(&obj.IdART, &obj.TotalKontakART)
-//
-//		if err != nil {
-//			log.Printf(err.Error())
-//			return res, err
-//		}
-//
-//		arrobj = append(arrobj, obj)
-//	}
-//	log.Printf("berhasil")
-//	res.Status = http.StatusOK
-//	res.Message = "Sukses"
-//	res.Data = arrobj
-//
-//	return res, nil
-//}
-
 func SimpanKontakuser(idmajikan int, idart int, waktukontak string) (Response, error) {
 	var res Response
 
@@ -1158,102 +1160,28 @@ func SimpanKontakuser(idmajikan int, idart int, waktukontak string) (Response, e
 	return res, nil
 }
 
-//func DataListKontakByMajikan(idmajikan int) (Response, error) {
-//	var obj KontakUser
-//	var arrobj []KontakUser
-//	var res Response
-//
-//	con := db.CreateCon()
-//
-//	sqlStatemet := "SELECT * FROM kontakuser WHERE idmajikan=?"
-//
-//	rows, err := con.Query(sqlStatemet, idmajikan)
-//
-//	defer rows.Close()
-//
-//	if err != nil {
-//		log.Printf(err.Error())
-//		return res, err
-//	}
-//
-//	for rows.Next() {
-//		err = rows.Scan(&obj.IdKontak, &obj.IdMajikan, &obj.IdART, &obj.WaktuKontak, &obj.Darimana)
-//
-//		if err != nil {
-//			log.Printf(err.Error())
-//			return res, err
-//		}
-//
-//		arrobj = append(arrobj, obj)
-//	}
-//	log.Printf("berhasil")
-//	res.Status = http.StatusOK
-//	res.Message = "Sukses"
-//	res.Data = arrobj
-//
-//	return res, nil
-//}
-//
-//func DataListKontakByART(idart int) (Response, error) {
-//	var obj KontakUser
-//	var arrobj []KontakUser
-//	var res Response
-//
-//	con := db.CreateCon()
-//
-//	sqlStatemet := "SELECT * FROM kontakuser WHERE idart=?"
-//
-//	rows, err := con.Query(sqlStatemet, idart)
-//
-//	defer rows.Close()
-//
-//	if err != nil {
-//		log.Printf(err.Error())
-//		return res, err
-//	}
-//
-//	for rows.Next() {
-//		err = rows.Scan(&obj.IdKontak, &obj.IdMajikan, &obj.IdART, &obj.WaktuKontak, &obj.Darimana)
-//
-//		if err != nil {
-//			log.Printf(err.Error())
-//			return res, err
-//		}
-//
-//		arrobj = append(arrobj, obj)
-//	}
-//	log.Printf("berhasil")
-//	res.Status = http.StatusOK
-//	res.Message = "Sukses"
-//	res.Data = arrobj
-//
-//	return res, nil
-//}
-
-type Penilaian struct {
-	IdART      int     `json:"idart"`
-	Etika      float64 `json:"etika"`
+type RataPenilaian struct {
 	Estetika   float64 `json:"estetika"`
+	Etika      float64 `json:"etika"`
 	Kebersihan float64 `json:"kebersihan"`
 	Kerapian   float64 `json:"kerapian"`
 	Kecepatan  float64 `json:"kecepatan"`
-	Review     string  `json:"review"`
 }
 
 func SimpanPenilaian(idart int, idmajikan int, etika int, estetika int,
-	kebersihan int, kerapian int, kecepatan int, rating float64, review string) (Response, error) {
+	kebersihan int, kerapian int, kecepatan int, rating float64, review string, tglpost string) (Response, error) {
 	var res Response
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO penilaian (idart, idmajikan, estetika, etika, kebersihan, kecepatan, kerapian, rating, review) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	sqlStatement := "INSERT INTO penilaian (idart, idmajikan, estetika, etika, kebersihan, kecepatan, kerapian, rating, review, tglpost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
 	stmt, err := con.Prepare(sqlStatement)
 	if err != nil {
 		return res, err
 	}
 
-	result, err := stmt.Exec(idart, idmajikan, estetika, etika, kebersihan, kecepatan, kerapian, rating, review)
+	result, err := stmt.Exec(idart, idmajikan, estetika, etika, kebersihan, kecepatan, kerapian, rating, review, tglpost)
 	if err != nil {
 		return res, err
 	}
@@ -1274,14 +1202,14 @@ func SimpanPenilaian(idart int, idmajikan int, etika int, estetika int,
 	return res, nil
 }
 
-func DataPenilaianART(idart int) (Response, error) {
-	var obj Penilaian
-	var arrobj []Penilaian
+func RataPenilaianART(idart int) (Response, error) {
+	var obj RataPenilaian
+	var arrobj []RataPenilaian
 	var res Response
 
 	con := db.CreateCon()
 
-	sqlStatemet := "SELECT idart, AVG(estetika) as estetika, AVG(etika) as etika, AVG(kebersihan) as kebersihan, AVG(kecepatan) as kecepatan, AVG(kerapian) as kerapian, review FROM penilaian WHERE idart = ?"
+	sqlStatemet := "SELECT AVG(estetika) as estetika, AVG(etika) as etika ,AVG(kebersihan) as kebersihan, AVG(kecepatan) as kecepatan, AVG(kerapian) as kerapian FROM penilaian WHERE idart = ?"
 
 	rows, err := con.Query(sqlStatemet, idart)
 
@@ -1293,9 +1221,8 @@ func DataPenilaianART(idart int) (Response, error) {
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&obj.IdART, &obj.Etika, &obj.Estetika,
-			&obj.Kebersihan, &obj.Kerapian, &obj.Kecepatan,
-			&obj.Review)
+		err = rows.Scan(&obj.Estetika, &obj.Etika,
+			&obj.Kebersihan, &obj.Kerapian, &obj.Kecepatan)
 
 		if err != nil {
 			log.Printf(err.Error())
@@ -1312,19 +1239,21 @@ func DataPenilaianART(idart int) (Response, error) {
 	return res, nil
 }
 
-type Rating struct {
-	IdART  int     `json:"idart"`
-	Rating float64 `json:"rating"`
+type ReviewMajikan struct {
+	IdMajikan   int    `json:"idmajikan"`
+	NamaLengkap string `json:"namalengkap"`
+	Review      string `json:"review"`
+	TglPost     string `json:"tglpost"`
 }
 
-func GetRatingART(idart int) (Response, error) {
-	var obj Rating
-	var arrobj []Rating
+func DataReviewMajikan(idart int) (Response, error) {
+	var obj ReviewMajikan
+	var arrobj []ReviewMajikan
 	var res Response
 
 	con := db.CreateCon()
 
-	sqlStatemet := "SELECT idart, rating FROM penilaian WHERE idart = ?"
+	sqlStatemet := "SELECT p.idmajikan, up.namalengkap, p.review, p.tglpost FROM penilaian p JOIN userprofile up ON p.idmajikan = up.iduser WHERE idart = ?"
 
 	rows, err := con.Query(sqlStatemet, idart)
 
@@ -1336,7 +1265,7 @@ func GetRatingART(idart int) (Response, error) {
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&obj.IdART, &obj.Rating)
+		err = rows.Scan(&obj.IdMajikan, &obj.NamaLengkap, &obj.Review, &obj.TglPost)
 
 		if err != nil {
 			log.Printf(err.Error())

@@ -52,7 +52,7 @@ func Init() *echo.Echo {
 	// ===== DETAIL KERJA ART ======
 	e.POST("/addkerjaart", controllers.SimpanDetailKerjaART)
 	e.GET("/alldatadetailkerjaart", controllers.DataAllDetailKerjaART)
-	e.GET("/datakerjaperkategori", controllers.DataListKerjaPerKategori)
+	e.GET("/dataartbykategori", controllers.DataARTbyKategori)
 	e.GET("/datauserdetailkerjaart", controllers.DataUserDetailKerjaART)
 	e.PUT("/edituserdetailkerjaart", controllers.UpdateUserDetailKerja)
 	// ==== END ====
@@ -68,16 +68,13 @@ func Init() *echo.Echo {
 
 	// ===== KONTAK USER =====     // Majikan melakukan call ke ART
 	e.POST("/addkontakuser", controllers.SimpanKontakUser)
-	//e.GET("/gettotalkontakart", controllers.GetTotalKontakART)
-	//e.GET("/datalistkontakbymajikan", controllers.DataListKontakByMajikan)
-	//e.GET("/datalistkontakbyart", controllers.DataListKontakByART)
-
 	// ==== END ====
 
 	// ===== PENILAIAN =====
 	e.POST("/addpenilaian", controllers.SimpanPenilaian)
-	e.GET("/datapenilaianart", controllers.DataPenilaianART)
-	e.GET("/getratingart", controllers.GetRatingART)
+	e.GET("/dataratapenilaian", controllers.RataPenilaianART)
+	e.GET("/datareviewmajikan", controllers.DataReviewMajikan)
+
 	// === END ===
 
 	// ===== SERTIFIKAT PELATIHAN =====
