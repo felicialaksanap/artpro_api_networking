@@ -53,6 +53,7 @@ func Init() *echo.Echo {
 	e.POST("/addkerjaart", controllers.SimpanDetailKerjaART)
 	e.GET("/alldatadetailkerjaart", controllers.DataAllDetailKerjaART)
 	e.GET("/dataartbykategori", controllers.DataARTbyKategori)
+	e.GET("/dataartbyfk", controllers.DataARTbyFK)
 	e.GET("/datauserdetailkerjaart", controllers.DataUserDetailKerjaART)
 	e.PUT("/edituserdetailkerjaart", controllers.UpdateUserDetailKerja)
 	// ==== END ====
@@ -78,8 +79,8 @@ func Init() *echo.Echo {
 	// === END ===
 
 	// ===== SERTIFIKAT PELATIHAN =====
-	e.POST("/addsertifpath", controllers.SimpanSertifikatPelatihan)
-	e.GET("/datasertifpelatihanuser", controllers.DataSertifPelatihanUser)
+	//e.POST("/addsertifpath", controllers.SimpanSertifikatPelatihan)
+	//e.GET("/datasertifpelatihanuser", controllers.DataSertifPelatihanUser)
 	// ===== END =====
 
 	return e

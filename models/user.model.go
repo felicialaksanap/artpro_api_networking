@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 func UploadFoto(request *http.Request, id string, folder string) (Response, error) {
@@ -620,7 +621,12 @@ type DetailProfileART struct {
 	PendidikanTerakhir string `json:"pendidikanterakhir"`
 	BeratBadan         int    `json:"beratbadan"`
 	TinggiBadan        int    `json:"tinggibadan"`
-	Agama              string `json:"agama"`
+	AIslam             int    `json:"aislam"`
+	AKatolik           int    `json:"akatolik"`
+	AKristen           int    `json:"akristen"`
+	AHindu             int    `json:"ahindu"`
+	ABuddha            int    `json:"abuddha"`
+	AKonghucu          int    `json:"akonghucu"`
 	TKMenginap         int    `json:"tkmenginap"`
 	TKWarnen           int    `json:"tkwarnen"`
 	Hewan              int    `json:"hewan"`
@@ -633,20 +639,21 @@ type DetailProfileART struct {
 }
 
 func SimpanDetailProfileART(iduser int, pendidikanterakhir string, beratbadan int,
-	tinggibadan int, agama string, tkmenginap int, tkwarnen int, hewan int,
-	mabukjalan int, sepedamotor int, mobil int, masak int, ssingle int, smarried int) (Response, error) {
+	tinggibadan int, aislam int, akatolik int, akristen int, ahindu int, abuddha int, akonghucu int,
+	tkmenginap int, tkwarnen int, hewan int, mabukjalan int, sepedamotor int, mobil int, masak int,
+	ssingle int, smarried int) (Response, error) {
 	var res Response
 
 	con := db.CreateCon()
 
-	sqlStatement := "INSERT INTO detailprofileart (iduser, pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried) VALUES (?, ?, ?, ?, ?, ?, ? ,?, ?, ?, ?, ?, ?, ?)"
+	sqlStatement := "INSERT INTO detailprofileart (iduser, pendidikanterakhir, beratbadan, tinggibadan, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried) VALUES (?, ?, ?, ?, ?, ?, ? ,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
 	stmt, err := con.Prepare(sqlStatement)
 	if err != nil {
 		return res, err
 	}
 
-	result, err := stmt.Exec(iduser, pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried)
+	result, err := stmt.Exec(iduser, pendidikanterakhir, beratbadan, tinggibadan, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried)
 	if err != nil {
 		return res, err
 	}
@@ -687,7 +694,8 @@ func DataUserDetailProfileART(iduser int) (Response, error) {
 
 	for rows.Next() {
 		err = rows.Scan(&obj.IdUser, &obj.PendidikanTerakhir, &obj.BeratBadan, &obj.TinggiBadan,
-			&obj.Agama, &obj.TKMenginap, &obj.TKWarnen, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
+			&obj.AIslam, &obj.AKatolik, &obj.AKristen, &obj.AHindu, &obj.ABuddha, &obj.AKonghucu,
+			&obj.TKMenginap, &obj.TKWarnen, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
 			&obj.Masak, &obj.SSingle, &obj.SMarried)
 
 		if err != nil {
@@ -706,20 +714,20 @@ func DataUserDetailProfileART(iduser int) (Response, error) {
 }
 
 func UpdateUserDetailProfileART(iduser int, pendidikanterakhir string, beratbadan int,
-	tinggibadan int, agama string, tkmenginap int, tkwarnen int, hewan int,
+	tinggibadan int, aislam int, akatolik int, akristen int, ahindu int, abuddha int, akonghucu int, tkmenginap int, tkwarnen int, hewan int,
 	mabukjalan int, sepedamotor int, mobil int, masak int, ssingle int, smarried int) (Response, error) {
 	var res Response
 
 	con := db.CreateCon()
 
-	sqlStatement := "UPDATE detailprofileart SET pendidikanterakhir=?, beratbadan=?, tinggibadan=?, agama=?, tkmenginap=?, tkwarnen=?, hewan=?, mabukjalan=?, sepedamotor=?, mobil=?, masak=?, ssingle=?, smarried=? WHERE iduser=?"
+	sqlStatement := "UPDATE detailprofileart SET pendidikanterakhir=?, beratbadan=?, tinggibadan=?, aislam=?, akatolik=?, akristen=?, ahindu=?, abuddha=?, akonghucu=?, tkmenginap=?, tkwarnen=?, hewan=?, mabukjalan=?, sepedamotor=?, mobil=?, masak=?, ssingle=?, smarried=? WHERE iduser=?"
 
 	stmt, err := con.Prepare(sqlStatement)
 	if err != nil {
 		return res, err
 	}
 
-	result, err := stmt.Exec(pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, iduser)
+	result, err := stmt.Exec(pendidikanterakhir, beratbadan, tinggibadan, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, iduser)
 	if err != nil {
 		return res, err
 	}
@@ -749,13 +757,13 @@ type DetailKerjaART struct {
 	KOfficeboy   int    `json:"kofficeboy"`
 	KTukangkebun int    `json:"ktukangkebun"`
 	Pengalaman   string `json:"pengalaman"`
-	GajiAwal     string `json:"gajiawal"`
-	GajiAkhir    string `json:"gajiakhir"`
+	GajiAwal     int    `json:"gajiawal"`
+	GajiAkhir    int    `json:"gajiakhir"`
 }
 
 func SimpanDetailKerjaART(iduser int, kprt int, kbabysitter int, kseniorcare int,
 	ksupir int, kofficeboy int, ktukangkebun int,
-	pengalaman string, gajiawal string, gajiakhir string) (Response, error) {
+	pengalaman string, gajiawal int, gajiakhir int) (Response, error) {
 	var res Response
 
 	con := db.CreateCon()
@@ -838,7 +846,12 @@ type DatabyKategori struct {
 	Pendidikan   string  `json:"pendidikan"`
 	BeratBadan   int     `json:"beratbadan"`
 	TinggiBadan  int     `json:"tinggibadan"`
-	Agama        string  `json:"agama"`
+	AIslam       int     `json:"aislam"`
+	AKatolik     int     `json:"akatolik"`
+	AKristen     int     `json:"akristen"`
+	AHindu       int     `json:"ahindu"`
+	ABuddha      int     `json:"abuddha"`
+	AKonghucu    int     `json:"akonghucu"`
 	TkMenginap   int     `json:"tkmenginap"`
 	TkWarnen     int     `json:"tkwarnen"`
 	Hewan        int     `json:"hewan"`
@@ -855,8 +868,10 @@ type DatabyKategori struct {
 	KOfficeBoy   int     `json:"kofficeboy"`
 	KTukangKebun int     `json:"ktukangkebun"`
 	Pengalaman   string  `json:"pengalaman"`
-	GajiAwal     string  `json:"gajiawal"`
-	GajiAkhir    string  `json:"gajiakhir"`
+	GajiAwal     int     `json:"gajiawal"`
+	GajiAkhir    int     `json:"gajiakhir"`
+	Latitude     string  `json:"latitude"`
+	Longitude    string  `json:"longitude"`
 	Rating       float64 `json:"rating"`
 }
 
@@ -868,9 +883,22 @@ func DataARTbyKategori(kategori string) (Response, error) {
 	con := db.CreateCon()
 
 	if kategori == "prt" {
-		sqlStatemet := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, dka.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir, AVG(p.rating) as rating FROM userprofile up JOIN detailprofileart dpa on up.iduser = dpa.iduser JOIN detailkerjaart dka on up.iduser = dka.iduser JOIN penilaian p on up.iduser = p.idart WHERE kprt = 1 GROUP BY idart ORDER BY rating DESC"
+		sqlStatement := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, " +
+			"tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, " +
+			"tinggibadan, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, tkmenginap, " +
+			"tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, dka.kprt, " +
+			"kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, " +
+			"gajiakhir, ud.latitude, longitude, AVG(p.rating) as rating " +
+			"FROM userprofile up " +
+			"JOIN detailprofileart dpa on up.iduser = dpa.iduser " +
+			"JOIN detailkerjaart dka on up.iduser = dka.iduser " +
+			"JOIN userdomisili ud on up.iduser = ud.iduser " +
+			"JOIN penilaian p on up.iduser = p.idart " +
+			"WHERE kprt = 1 " +
+			"GROUP BY idart " +
+			"ORDER BY rating DESC"
 
-		rows, err := con.Query(sqlStatemet)
+		rows, err := con.Query(sqlStatement)
 		defer rows.Close()
 		if err != nil {
 			log.Printf(err.Error())
@@ -880,11 +908,12 @@ func DataARTbyKategori(kategori string) (Response, error) {
 		for rows.Next() {
 			err = rows.Scan(&obj.IdART, &obj.NamaLengkap, &obj.JenisKelamin, &obj.TempatLahir,
 				&obj.TanggalLahir, &obj.Telephone, &obj.ProfPicPath, &obj.Pendidikan,
-				&obj.BeratBadan, &obj.TinggiBadan, &obj.Agama, &obj.TkMenginap,
+				&obj.BeratBadan, &obj.TinggiBadan, &obj.AIslam, &obj.AKatolik, &obj.AKristen,
+				&obj.AHindu, &obj.ABuddha, &obj.AKonghucu, &obj.TkMenginap,
 				&obj.TkWarnen, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
 				&obj.Masak, &obj.SSingle, &obj.SMarried, &obj.KPrt, &obj.KBabySitter,
 				&obj.KSeniorCare, &obj.KSupir, &obj.KOfficeBoy, &obj.KTukangKebun,
-				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Rating)
+				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Latitude, &obj.Longitude, &obj.Rating)
 
 			if err != nil {
 				log.Printf(err.Error())
@@ -898,9 +927,22 @@ func DataARTbyKategori(kategori string) (Response, error) {
 		res.Message = "Sukses"
 		res.Data = arrobj
 	} else if kategori == "babysitter" {
-		sqlStatemet := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, dka.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir, AVG(p.rating) as rating FROM userprofile up JOIN detailprofileart dpa on up.iduser = dpa.iduser JOIN detailkerjaart dka on up.iduser = dka.iduser JOIN penilaian p on up.iduser = p.idart WHERE kbabysitter = 1 GROUP BY idart ORDER BY rating DESC"
+		sqlStatement := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, " +
+			"tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, " +
+			"tinggibadan, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, tkmenginap, " +
+			"tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, " +
+			"dka.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, " +
+			"gajiawal, gajiakhir, ud.latitude, longitude, AVG(p.rating) as rating " +
+			"FROM userprofile up " +
+			"JOIN detailprofileart dpa on up.iduser = dpa.iduser " +
+			"JOIN detailkerjaart dka on up.iduser = dka.iduser " +
+			"JOIN userdomisili ud on up.iduser = ud.iduser " +
+			"JOIN penilaian p on up.iduser = p.idart " +
+			"WHERE kbabysitter = 1 " +
+			"GROUP BY idart " +
+			"ORDER BY rating DESC"
 
-		rows, err := con.Query(sqlStatemet)
+		rows, err := con.Query(sqlStatement)
 		defer rows.Close()
 		if err != nil {
 			log.Printf(err.Error())
@@ -910,11 +952,12 @@ func DataARTbyKategori(kategori string) (Response, error) {
 		for rows.Next() {
 			err = rows.Scan(&obj.IdART, &obj.NamaLengkap, &obj.JenisKelamin, &obj.TempatLahir,
 				&obj.TanggalLahir, &obj.Telephone, &obj.ProfPicPath, &obj.Pendidikan,
-				&obj.BeratBadan, &obj.TinggiBadan, &obj.Agama, &obj.TkMenginap,
+				&obj.BeratBadan, &obj.TinggiBadan, &obj.AIslam, &obj.AKatolik, &obj.AKristen,
+				&obj.AHindu, &obj.ABuddha, &obj.AKonghucu, &obj.TkMenginap,
 				&obj.TkWarnen, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
 				&obj.Masak, &obj.SSingle, &obj.SMarried, &obj.KPrt, &obj.KBabySitter,
 				&obj.KSeniorCare, &obj.KSupir, &obj.KOfficeBoy, &obj.KTukangKebun,
-				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Rating)
+				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Latitude, &obj.Longitude, &obj.Rating)
 
 			if err != nil {
 				log.Printf(err.Error())
@@ -928,9 +971,22 @@ func DataARTbyKategori(kategori string) (Response, error) {
 		res.Message = "Sukses"
 		res.Data = arrobj
 	} else if kategori == "seniorcare" {
-		sqlStatemet := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, dka.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir, AVG(p.rating) as rating FROM userprofile up JOIN detailprofileart dpa on up.iduser = dpa.iduser JOIN detailkerjaart dka on up.iduser = dka.iduser JOIN penilaian p on up.iduser = p.idart WHERE kseniorcare = 1 GROUP BY idart ORDER BY rating DESC"
+		sqlStatement := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, " +
+			"tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, " +
+			"tinggibadan, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, tkmenginap, " +
+			"tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, dka.kprt, " +
+			"kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, " +
+			"gajiakhir, ud.latitude, longitude, AVG(p.rating) as rating " +
+			"FROM userprofile up " +
+			"JOIN detailprofileart dpa on up.iduser = dpa.iduser " +
+			"JOIN detailkerjaart dka on up.iduser = dka.iduser " +
+			"JOIN userdomisili ud on up.iduser = ud.iduser " +
+			"JOIN penilaian p on up.iduser = p.idart " +
+			"WHERE kseniorcare = 1 " +
+			"GROUP BY idart " +
+			"ORDER BY rating DESC"
 
-		rows, err := con.Query(sqlStatemet)
+		rows, err := con.Query(sqlStatement)
 		defer rows.Close()
 		if err != nil {
 			log.Printf(err.Error())
@@ -940,11 +996,12 @@ func DataARTbyKategori(kategori string) (Response, error) {
 		for rows.Next() {
 			err = rows.Scan(&obj.IdART, &obj.NamaLengkap, &obj.JenisKelamin, &obj.TempatLahir,
 				&obj.TanggalLahir, &obj.Telephone, &obj.ProfPicPath, &obj.Pendidikan,
-				&obj.BeratBadan, &obj.TinggiBadan, &obj.Agama, &obj.TkMenginap,
+				&obj.BeratBadan, &obj.TinggiBadan, &obj.AIslam, &obj.AKatolik, &obj.AKristen,
+				&obj.AHindu, &obj.ABuddha, &obj.AKonghucu, &obj.TkMenginap,
 				&obj.TkWarnen, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
 				&obj.Masak, &obj.SSingle, &obj.SMarried, &obj.KPrt, &obj.KBabySitter,
 				&obj.KSeniorCare, &obj.KSupir, &obj.KOfficeBoy, &obj.KTukangKebun,
-				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Rating)
+				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Latitude, &obj.Longitude, &obj.Rating)
 
 			if err != nil {
 				log.Printf(err.Error())
@@ -958,9 +1015,22 @@ func DataARTbyKategori(kategori string) (Response, error) {
 		res.Message = "Sukses"
 		res.Data = arrobj
 	} else if kategori == "supir" {
-		sqlStatemet := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, dka.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir, AVG(p.rating) as rating FROM userprofile up JOIN detailprofileart dpa on up.iduser = dpa.iduser JOIN detailkerjaart dka on up.iduser = dka.iduser JOIN penilaian p on up.iduser = p.idart WHERE ksupir = 1 GROUP BY idart ORDER BY rating DESC"
+		sqlStatement := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, " +
+			"tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, " +
+			"tinggibadan, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, " +
+			"tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, " +
+			"smarried, dka.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, " +
+			"pengalaman, gajiawal, gajiakhir, ud.latitude, longitude, AVG(p.rating) as rating " +
+			"FROM userprofile up " +
+			"JOIN detailprofileart dpa on up.iduser = dpa.iduser " +
+			"JOIN detailkerjaart dka on up.iduser = dka.iduser " +
+			"JOIN userdomisili ud on up.iduser = ud.iduser " +
+			"JOIN penilaian p on up.iduser = p.idart " +
+			"WHERE ksupir = 1 G" +
+			"ROUP BY idart " +
+			"ORDER BY rating DESC"
 
-		rows, err := con.Query(sqlStatemet)
+		rows, err := con.Query(sqlStatement)
 		defer rows.Close()
 		if err != nil {
 			log.Printf(err.Error())
@@ -970,11 +1040,12 @@ func DataARTbyKategori(kategori string) (Response, error) {
 		for rows.Next() {
 			err = rows.Scan(&obj.IdART, &obj.NamaLengkap, &obj.JenisKelamin, &obj.TempatLahir,
 				&obj.TanggalLahir, &obj.Telephone, &obj.ProfPicPath, &obj.Pendidikan,
-				&obj.BeratBadan, &obj.TinggiBadan, &obj.Agama, &obj.TkMenginap,
+				&obj.BeratBadan, &obj.TinggiBadan, &obj.AIslam, &obj.AKatolik, &obj.AKristen,
+				&obj.AHindu, &obj.ABuddha, &obj.AKonghucu, &obj.TkMenginap,
 				&obj.TkWarnen, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
 				&obj.Masak, &obj.SSingle, &obj.SMarried, &obj.KPrt, &obj.KBabySitter,
 				&obj.KSeniorCare, &obj.KSupir, &obj.KOfficeBoy, &obj.KTukangKebun,
-				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Rating)
+				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Latitude, &obj.Longitude, &obj.Rating)
 
 			if err != nil {
 				log.Printf(err.Error())
@@ -988,9 +1059,22 @@ func DataARTbyKategori(kategori string) (Response, error) {
 		res.Message = "Sukses"
 		res.Data = arrobj
 	} else if kategori == "officeboy" {
-		sqlStatemet := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, dka.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir, AVG(p.rating) as rating FROM userprofile up JOIN detailprofileart dpa on up.iduser = dpa.iduser JOIN detailkerjaart dka on up.iduser = dka.iduser JOIN penilaian p on up.iduser = p.idart WHERE kofficeboy = 1 GROUP BY idart ORDER BY rating DESC"
+		sqlStatement := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, " +
+			"tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, " +
+			"tinggibadan, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, " +
+			"tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, " +
+			"smarried, dka.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, " +
+			"pengalaman, gajiawal, gajiakhir, ud.latitude, longitude, AVG(p.rating) as rating " +
+			"FROM userprofile up " +
+			"JOIN detailprofileart dpa on up.iduser = dpa.iduser " +
+			"JOIN detailkerjaart dka on up.iduser = dka.iduser " +
+			"JOIN userdomisili ud on up.iduser = ud.iduser " +
+			"JOIN penilaian p on up.iduser = p.idart " +
+			"WHERE kofficeboy = 1 " +
+			"GROUP BY idart " +
+			"ORDER BY rating DESC"
 
-		rows, err := con.Query(sqlStatemet)
+		rows, err := con.Query(sqlStatement)
 		defer rows.Close()
 		if err != nil {
 			log.Printf(err.Error())
@@ -1000,11 +1084,12 @@ func DataARTbyKategori(kategori string) (Response, error) {
 		for rows.Next() {
 			err = rows.Scan(&obj.IdART, &obj.NamaLengkap, &obj.JenisKelamin, &obj.TempatLahir,
 				&obj.TanggalLahir, &obj.Telephone, &obj.ProfPicPath, &obj.Pendidikan,
-				&obj.BeratBadan, &obj.TinggiBadan, &obj.Agama, &obj.TkMenginap,
+				&obj.BeratBadan, &obj.TinggiBadan, &obj.AIslam, &obj.AKatolik, &obj.AKristen,
+				&obj.AHindu, &obj.ABuddha, &obj.AKonghucu, &obj.TkMenginap,
 				&obj.TkWarnen, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
 				&obj.Masak, &obj.SSingle, &obj.SMarried, &obj.KPrt, &obj.KBabySitter,
 				&obj.KSeniorCare, &obj.KSupir, &obj.KOfficeBoy, &obj.KTukangKebun,
-				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Rating)
+				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Latitude, &obj.Longitude, &obj.Rating)
 
 			if err != nil {
 				log.Printf(err.Error())
@@ -1018,9 +1103,22 @@ func DataARTbyKategori(kategori string) (Response, error) {
 		res.Message = "Sukses"
 		res.Data = arrobj
 	} else if kategori == "tukangkebun" {
-		sqlStatemet := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, tinggibadan, agama, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, dka.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, pengalaman, gajiawal, gajiakhir, AVG(p.rating) as rating FROM userprofile up JOIN detailprofileart dpa on up.iduser = dpa.iduser JOIN detailkerjaart dka on up.iduser = dka.iduser JOIN penilaian p on up.iduser = p.idart WHERE ktukangkebun = 1 GROUP BY idart ORDER BY rating DESC"
+		sqlStatement := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, " +
+			"tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, " +
+			"tinggibadan, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, " +
+			"tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, " +
+			"smarried, dka.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, " +
+			"pengalaman, gajiawal, gajiakhir, ud.latitude, longitude, AVG(p.rating) as rating " +
+			"FROM userprofile up " +
+			"JOIN detailprofileart dpa on up.iduser = dpa.iduser " +
+			"JOIN detailkerjaart dka on up.iduser = dka.iduser " +
+			"JOIN userdomisili ud on up.iduser = ud.iduser " +
+			"JOIN penilaian p on up.iduser = p.idart " +
+			"WHERE ktukangkebun = 1 " +
+			"GROUP BY idart " +
+			"ORDER BY rating DESC"
 
-		rows, err := con.Query(sqlStatemet)
+		rows, err := con.Query(sqlStatement)
 		defer rows.Close()
 		if err != nil {
 			log.Printf(err.Error())
@@ -1030,11 +1128,12 @@ func DataARTbyKategori(kategori string) (Response, error) {
 		for rows.Next() {
 			err = rows.Scan(&obj.IdART, &obj.NamaLengkap, &obj.JenisKelamin, &obj.TempatLahir,
 				&obj.TanggalLahir, &obj.Telephone, &obj.ProfPicPath, &obj.Pendidikan,
-				&obj.BeratBadan, &obj.TinggiBadan, &obj.Agama, &obj.TkMenginap,
+				&obj.BeratBadan, &obj.TinggiBadan, &obj.AIslam, &obj.AKatolik, &obj.AKristen,
+				&obj.AHindu, &obj.ABuddha, &obj.AKonghucu, &obj.TkMenginap,
 				&obj.TkWarnen, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
 				&obj.Masak, &obj.SSingle, &obj.SMarried, &obj.KPrt, &obj.KBabySitter,
 				&obj.KSeniorCare, &obj.KSupir, &obj.KOfficeBoy, &obj.KTukangKebun,
-				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Rating)
+				&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Latitude, &obj.Longitude, &obj.Rating)
 
 			if err != nil {
 				log.Printf(err.Error())
@@ -1047,6 +1146,211 @@ func DataARTbyKategori(kategori string) (Response, error) {
 		res.Status = http.StatusOK
 		res.Message = "Sukses"
 		res.Data = arrobj
+	}
+
+	return res, nil
+}
+
+type DatabyFilter struct {
+	IdART            int     `json:"idart"`
+	IdMajikan        int     `json:"idmajikan"`
+	InnerProduct     float64 `json:"innerproduct"`
+	X                float64 `json:"x"`
+	Y                float64 `json:"y"`
+	CosineSimilarity float64 `json:"cosinesimilarity"`
+	NamaLengkap      string  `json:"namalengkap"`
+	JenisKelamin     string  `json:"jeniskelamin"`
+	TempatLahir      string  `json:"tempatlahir"`
+	TanggalLahir     string  `json:"tanggallahir"`
+	Telephone        string  `json:"telephone"`
+	Pendidikan       string  `json:"pendidikan"`
+	BeratBadan       int     `json:"beratbadan"`
+	TinggiBadan      int     `json:"tinggibadan"`
+	AIslam           int     `json:"aislam"`
+	AKatolik         int     `json:"akatolik"`
+	AKristen         int     `json:"akristen"`
+	AHindu           int     `json:"ahindu"`
+	ABuddha          int     `json:"abuddha"`
+	AKonghucu        int     `json:"akonghucu"`
+	TKMenginap       int     `json:"tkmenginap"`
+	TKWarnen         int     `json:"tkwarnen"`
+	Hewan            int     `json:"hewan"`
+	MabukJalan       int     `json:"mabukjalan"`
+	SepedaMotor      int     `json:"sepedamotor"`
+	Mobil            int     `json:"mobil"`
+	Masak            int     `json:"masak"`
+	SSingle          int     `json:"ssingle"`
+	SMarried         int     `json:"smarried"`
+	KPrt             int     `json:"kprt"`
+	KBabysitter      int     `json:"kbabysitter"`
+	KSeniorcare      int     `json:"kseniorcare"`
+	KSupir           int     `json:"ksupir"`
+	KOfficeboy       int     `json:"kofficeboy"`
+	KTukangkebun     int     `json:"ktukangkebun"`
+	Pengalaman       string  `json:"pengalaman"`
+	Gajiawal         int     `json:"gajiawal"`
+	Gajiakhir        int     `json:"gajiakhir"`
+	Rating           float64 `json:"rating"`
+}
+
+func DataARTbyFK(kategori string, idmajikan int, aislam int, akatolik int,
+	akristen int, ahindu int, abuddha int, akonghucu int,
+	tkmenginap int, tkwarnen int, hewan int, mabukjalan int,
+	sepedamotor int, mobil int, masak int, ssingle int, smarried int,
+	kprt int, kbabysitter int, kseniorcare int, ksupir int,
+	kofficeboy int, ktukangkebun int, gajiawal int, gajiakhir int, jarak int) (Response, error) {
+
+	var obj DatabyFilter
+	var arrobj []DatabyFilter
+	var res Response
+
+	con := db.CreateCon()
+
+	name := "tabletemp"
+	id := strconv.Itoa(idmajikan)
+	tablename := name + id
+
+	sqlStatement := "CREATE TABLE " + tablename + " (iduser int, aislam int, akatolik int, " +
+		"akristen int, ahindu int, abuddha int, akonghucu int, tkmenginap int, " +
+		"tkwarnen int, hewan int, mabukjalan int, sepedamotor int, mobil int, masak int, ssingle int," +
+		"smarried int, kprt int, kbabysitter int, kseniorcare int, ksupir int, kofficeboy int," +
+		" ktukangkebun int, gajiawal double, gajiakhir double)"
+
+	_, err := con.Exec(sqlStatement)
+	if err != nil {
+		log.Printf(err.Error())
+		return res, nil
+	}
+
+	if kategori == "prt" {
+		sqlStatement = "INSERT INTO " + tablename +
+			" SELECT dp.iduser, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, " +
+			"tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, " +
+			"smarried, dk.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, " +
+			"gajiawal, gajiakhir " +
+			"FROM detailprofileart dp " +
+			"JOIN detailkerjaart dk on dp.iduser = dk.iduser " +
+			"WHERE kprt=1"
+		_, err = con.Exec(sqlStatement)
+		if err != nil {
+			log.Printf(err.Error())
+			return res, nil
+		}
+	}
+
+	sqlStatement = "ALTER TABLE " + tablename + " ADD jarak double NOT NULL"
+	_, err = con.Exec(sqlStatement)
+	if err != nil {
+		log.Printf(err.Error())
+		return res, nil
+	}
+
+	sqlStatement = "INSERT INTO " + tablename + " (iduser, aislam, akatolik, akristen, ahindu, " +
+		"abuddha, akonghucu, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, " +
+		"masak, ssingle, smarried, kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, " +
+		"ktukangkebun, gajiawal, gajiakhir, jarak) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, " +
+		"?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	_, err = con.Exec(sqlStatement, idmajikan, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, tkmenginap,
+		tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, kprt,
+		kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, gajiawal, gajiakhir, jarak)
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	sqlStatement = "UPDATE " + tablename + " SET gajiawal = (gajiawal-0)/(4000000-0), " +
+		"gajiakhir = (gajiakhir-0)/(4000000-0), jarak = (jarak-0)/(10-0)"
+	_, err = con.Exec(sqlStatement)
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	sqlStatement = "SELECT a.iduser as idart, b.iduser as idmajikan, " +
+		"((a.aislam * b.aislam)+(a.akatolik * b.akatolik)+(a.akristen * b.akristen)+(a.ahindu * b.ahindu)" +
+		"+(a.abuddha * b.abuddha)+(a.akonghucu * b.akonghucu)+(a.tkmenginap * b.tkmenginap)+(a.tkwarnen*b.tkwarnen)" +
+		"+(a.hewan*b.hewan)+(a.mabukjalan*b.mabukjalan)+(a.sepedamotor*b.sepedamotor)+(a.mobil*b.mobil)" +
+		"+(a.masak*b.masak)+(a.ssingle*b.ssingle)+(a.smarried*b.smarried)+(a.kprt*b.kprt)+(a.kbabysitter*b.kbabysitter)" +
+		"+(a.gajiawal*b.gajiawal)+(a.gajiakhir*b.gajiakhir)+(a.jarak*b.jarak)) as innerproduct," +
+		"((a.aislam * a.aislam)+(a.akatolik * a.akatolik)+(a.akristen * a.akristen)+(a.ahindu * a.ahindu)" +
+		"+(a.abuddha * a.abuddha)+(a.akonghucu * a.akonghucu)+(a.tkmenginap * a.tkmenginap)+(a.tkwarnen*a.tkwarnen)" +
+		"+(a.hewan*a.hewan)+(a.mabukjalan*a.mabukjalan)+(a.sepedamotor*a.sepedamotor)+(a.mobil*a.mobil)" +
+		"+(a.masak*a.masak)+(a.ssingle*a.ssingle)+(a.smarried*a.smarried)+(a.kprt*a.kprt)+(a.kbabysitter*a.kbabysitter)" +
+		"+(a.kseniorcare*a.kseniorcare)+(a.ksupir*a.ksupir)+(a.kofficeboy*a.kofficeboy)+(a.ktukangkebun*a.ktukangkebun)" +
+		"+(a.gajiawal*a.gajiawal)+(a.gajiakhir*a.gajiakhir)+(a.jarak*a.jarak)) as x, ((b.aislam * b.aislam)" +
+		"+(b.akatolik * b.akatolik)+(b.akristen * b.akristen)+(b.ahindu * b.ahindu)+(b.abuddha * b.abuddha)" +
+		"+(b.akonghucu * b.akonghucu)+(b.tkmenginap * b.tkmenginap)+(b.tkwarnen*b.tkwarnen)+(b.hewan*b.hewan)" +
+		"+(b.mabukjalan*b.mabukjalan)+(b.sepedamotor*b.sepedamotor)+(b.mobil*b.mobil)+(b.masak*b.masak)" +
+		"+(b.ssingle*b.ssingle)+(b.smarried*b.smarried)+(b.kprt*b.kprt)+(b.kbabysitter*b.kbabysitter)" +
+		"+(b.kseniorcare*b.kseniorcare)+(b.ksupir*b.ksupir)+(b.kofficeboy*b.kofficeboy)+(b.ktukangkebun*b.ktukangkebun)" +
+		"+(b.gajiawal*b.gajiawal)+(b.gajiakhir*b.gajiakhir)+(b.jarak*b.jarak)) as y, ((a.aislam * b.aislam)" +
+		"+(a.akatolik * b.akatolik)+(a.akristen * b.akristen)+(a.ahindu * b.ahindu)+(a.abuddha * b.abuddha)" +
+		"+(a.akonghucu * b.akonghucu)+(a.tkmenginap * b.tkmenginap)+(a.tkwarnen*b.tkwarnen)+(a.hewan*b.hewan)" +
+		"+(a.mabukjalan*b.mabukjalan)+(a.sepedamotor*b.sepedamotor)+(a.mobil*b.mobil)+(a.masak*b.masak)" +
+		"+(a.ssingle*b.ssingle)+(a.smarried*b.smarried)+(a.kprt*b.kprt)+(a.kbabysitter*b.kbabysitter)" +
+		"+(a.kseniorcare*b.kseniorcare)+(a.ksupir*b.ksupir)+(a.kofficeboy*b.kofficeboy)+(a.ktukangkebun*b.ktukangkebun)" +
+		"+(a.gajiawal*b.gajiawal)+(a.gajiakhir*b.gajiakhir)+(a.jarak*b.jarak))/sqrt(((a.aislam * a.aislam)" +
+		"+(a.akatolik * a.akatolik)+(a.akristen * a.akristen)+(a.ahindu * a.ahindu)+(a.abuddha * a.abuddha)" +
+		"+(a.akonghucu * a.akonghucu)+(a.tkmenginap * a.tkmenginap)+(a.tkwarnen*a.tkwarnen)+(a.hewan*a.hewan)" +
+		"+(a.mabukjalan*a.mabukjalan)+(a.sepedamotor*a.sepedamotor)+(a.mobil*a.mobil)+(a.masak*a.masak)" +
+		"+(a.ssingle*a.ssingle)+(a.smarried*a.smarried)+(a.kprt*a.kprt)+(a.kbabysitter*a.kbabysitter)" +
+		"+(a.kseniorcare*a.kseniorcare)+(a.ksupir*a.ksupir)+(a.kofficeboy*a.kofficeboy)+(a.ktukangkebun*a.ktukangkebun)" +
+		"+(a.gajiawal*a.gajiawal)+(a.gajiakhir*a.gajiakhir)+(a.jarak*a.jarak))*((b.aislam * b.aislam)" +
+		"+(b.akatolik * b.akatolik)+(b.akristen * b.akristen)+(b.ahindu * b.ahindu)+(b.abuddha * b.abuddha)" +
+		"+(b.akonghucu * b.akonghucu)+(b.tkmenginap * b.tkmenginap)+(b.tkwarnen*b.tkwarnen)+(b.hewan*b.hewan)" +
+		"+(b.mabukjalan*b.mabukjalan)+(b.sepedamotor*b.sepedamotor)+(b.mobil*b.mobil)+(b.masak*b.masak)" +
+		"+(b.ssingle*b.ssingle)+(b.smarried*b.smarried)+(b.kprt*b.kprt)+(b.kbabysitter*b.kbabysitter)" +
+		"+(b.kseniorcare*b.kseniorcare)+(b.ksupir*b.ksupir)+(b.kofficeboy*b.kofficeboy)+(b.ktukangkebun*b.ktukangkebun)" +
+		"+(b.gajiawal*b.gajiawal)+(b.gajiakhir*b.gajiakhir)+(b.jarak*b.jarak))) as cosinesimilarity, " +
+		"up.namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone, " +
+		"dpa.pendidikanterakhir, beratbadan, tinggibadan, dpa.aislam, dpa.akatolik, dpa.akristen, dpa.ahindu, " +
+		"dpa.abuddha, dpa.akonghucu, dpa.tkmenginap, dpa.tkwarnen, dpa.hewan, dpa.mabukjalan, dpa.sepedamotor, " +
+		"dpa.mobil, dpa.masak, dpa.ssingle, dpa.smarried, " +
+		"dka.kprt, dka.kbabysitter, dka.kseniorcare, dka.ksupir, dka.kofficeboy, dka.ktukangkebun, pengalaman, " +
+		"dka.gajiawal, dka.gajiakhir, " +
+		"AVG(p.rating) as rating " +
+		"FROM " + tablename + " a " +
+		"JOIN " + tablename + " b " +
+		"JOIN userprofile up ON a.iduser = up.iduser " +
+		"JOIN detailprofileart dpa ON a.iduser = dpa.iduser " +
+		"JOIN detailkerjaart dka ON a.iduser = dka.iduser " +
+		"JOIN penilaian p ON a.iduser = p.idart " +
+		"WHERE b.iduser = 1 AND a.iduser != 1 " +
+		"GROUP BY p.idart " +
+		"ORDER BY cosinesimilarity DESC"
+
+	rows, err := con.Query(sqlStatement)
+	defer rows.Close()
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.IdART, &obj.IdMajikan, &obj.InnerProduct, &obj.X, &obj.Y, &obj.CosineSimilarity,
+			&obj.NamaLengkap, &obj.JenisKelamin, &obj.TempatLahir, &obj.TanggalLahir, &obj.Telephone,
+			&obj.Pendidikan, &obj.BeratBadan, &obj.TinggiBadan, &obj.AIslam, &obj.AKatolik,
+			&obj.AKristen, &obj.AHindu, &obj.ABuddha, &obj.AKonghucu, &obj.TKMenginap, &obj.TKWarnen,
+			&obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil, &obj.Masak, &obj.SSingle,
+			&obj.SMarried, &obj.KPrt, &obj.KBabysitter, &obj.KSeniorcare, &obj.KSupir, &obj.KOfficeboy,
+			&obj.KTukangkebun, &obj.Pengalaman, &obj.Gajiawal, &obj.Gajiakhir, &obj.Rating)
+
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		arrobj = append(arrobj, obj)
+	}
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = arrobj
+
+	sqlStatement = "DROP TABLE " + tablename
+	_, err = con.Exec(sqlStatement)
+	if err != nil {
+		log.Printf(err.Error())
+		return res, nil
 	}
 
 	return res, nil
@@ -1094,7 +1398,7 @@ func DataUserDetailKerjaART(iduser int) (Response, error) {
 
 func UpdateUserDetailKerja(iduser int, kprt int, kbabysitter int,
 	kseniorcare int, ksupir int, kofficeboy int,
-	ktukangkebun int, pengalaman string, gajiawal string, gajiakhir string) (Response, error) {
+	ktukangkebun int, pengalaman string, gajiawal int, gajiakhir int) (Response, error) {
 	var res Response
 
 	con := db.CreateCon()
@@ -1282,76 +1586,76 @@ func DataReviewMajikan(idart int) (Response, error) {
 	return res, nil
 }
 
-type SertifikatPelatihan struct {
-	IdUser     int    `json:"iduser"`
-	SertifPath string `json:"sertifpath"`
-}
-
-func SimpanSertifikatPelatihan(iduser int, sertifpath string) (Response, error) {
-	var res Response
-
-	con := db.CreateCon()
-
-	sqlStatement := "INSERT INTO sertifikatpelatihan (iduser, sertifpath) VALUES (?, ?)"
-
-	stmt, err := con.Prepare(sqlStatement)
-	if err != nil {
-		return res, err
-	}
-
-	result, err := stmt.Exec(iduser, sertifpath)
-	if err != nil {
-		return res, err
-	}
-
-	defer stmt.Close()
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return res, err
-	}
-
-	res.Status = http.StatusOK
-	res.Message = "Sukses"
-	res.Data = map[string]int64{
-		"rowsAffected": rowsAffected,
-	}
-
-	return res, nil
-}
-
-func DataSertifPelatihanUser(iduser int) (Response, error) {
-	var obj SertifikatPelatihan
-	var arrobj []SertifikatPelatihan
-	var res Response
-
-	con := db.CreateCon()
-
-	sqlStatemet := "SELECT * FROM sertifikatpelatihan WHERE iduser=?"
-
-	rows, err := con.Query(sqlStatemet, iduser)
-
-	defer rows.Close()
-
-	if err != nil {
-		log.Printf(err.Error())
-		return res, err
-	}
-
-	for rows.Next() {
-		err = rows.Scan(&obj.IdUser, &obj.SertifPath)
-
-		if err != nil {
-			log.Printf(err.Error())
-			return res, err
-		}
-
-		arrobj = append(arrobj, obj)
-	}
-	log.Printf("berhasil")
-	res.Status = http.StatusOK
-	res.Message = "Sukses"
-	res.Data = arrobj
-
-	return res, nil
-}
+//type SertifikatPelatihan struct {
+//	IdUser     int    `json:"iduser"`
+//	SertifPath string `json:"sertifpath"`
+//}
+//
+//func SimpanSertifikatPelatihan(iduser int, sertifpath string) (Response, error) {
+//	var res Response
+//
+//	con := db.CreateCon()
+//
+//	sqlStatement := "INSERT INTO sertifikatpelatihan (iduser, sertifpath) VALUES (?, ?)"
+//
+//	stmt, err := con.Prepare(sqlStatement)
+//	if err != nil {
+//		return res, err
+//	}
+//
+//	result, err := stmt.Exec(iduser, sertifpath)
+//	if err != nil {
+//		return res, err
+//	}
+//
+//	defer stmt.Close()
+//
+//	rowsAffected, err := result.RowsAffected()
+//	if err != nil {
+//		return res, err
+//	}
+//
+//	res.Status = http.StatusOK
+//	res.Message = "Sukses"
+//	res.Data = map[string]int64{
+//		"rowsAffected": rowsAffected,
+//	}
+//
+//	return res, nil
+//}
+//
+//func DataSertifPelatihanUser(iduser int) (Response, error) {
+//	var obj SertifikatPelatihan
+//	var arrobj []SertifikatPelatihan
+//	var res Response
+//
+//	con := db.CreateCon()
+//
+//	sqlStatemet := "SELECT * FROM sertifikatpelatihan WHERE iduser=?"
+//
+//	rows, err := con.Query(sqlStatemet, iduser)
+//
+//	defer rows.Close()
+//
+//	if err != nil {
+//		log.Printf(err.Error())
+//		return res, err
+//	}
+//
+//	for rows.Next() {
+//		err = rows.Scan(&obj.IdUser, &obj.SertifPath)
+//
+//		if err != nil {
+//			log.Printf(err.Error())
+//			return res, err
+//		}
+//
+//		arrobj = append(arrobj, obj)
+//	}
+//	log.Printf("berhasil")
+//	res.Status = http.StatusOK
+//	res.Message = "Sukses"
+//	res.Data = arrobj
+//
+//	return res, nil
+//}

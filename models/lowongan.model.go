@@ -10,8 +10,8 @@ type LowonganKerja struct {
 	IdLoker      int    `json:"idloker"`
 	IdUser       int    `json:"iduser"`
 	JudulLoker   string `json:"judulloker"`
-	GajiAwal     string `json:"gajiawal"`
-	GajiAkhir    string `json:"gajiakhir"`
+	GajiAwal     int    `json:"gajiawal"`
+	GajiAkhir    int    `json:"gajiakhir"`
 	Informasi    string `json:"informasi"`
 	Tugas        string `json:"tugas"`
 	KPrt         int    `json:"kprt"`
@@ -37,7 +37,7 @@ type LowonganKerja struct {
 	Kota         string `json:"kota"`
 }
 
-func SimpanLowonganKerja(iduser int, judulloker string, gajiawal string, gajiakhir string,
+func SimpanLowonganKerja(iduser int, judulloker string, gajiawal int, gajiakhir int,
 	informasi string, tugas string, kprt int, kbabysitter int, kseniorcare int,
 	ksupir int, kofficeboy int, ktukangkebun int, hewan int, masak int, mabukjalan int,
 	sepedamotor int, mobil int, tkmenginap int, tkwarnen int, ssingle int, smarried int,
@@ -228,7 +228,7 @@ func UpdateStatusLoker(idloker int, statusloker int, tglpost string) (Response, 
 	return res, nil
 }
 
-func UpdateLowonganKerja(idloker int, judulloker string, gajiawal string, gajiakhir string,
+func UpdateLowonganKerja(idloker int, judulloker string, gajiawal int, gajiakhir int,
 	informasi string, tugas string, kprt int, kbabysitter int, kseniorcare int,
 	ksupir int, kofficeboy int, ktukangkebun int, hewan int, masak int,
 	mabukjalan int, sepedamotor int, mobil int, tkmenginap int, tkwarnen int,

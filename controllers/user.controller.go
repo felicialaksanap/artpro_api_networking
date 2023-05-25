@@ -233,7 +233,12 @@ func SimpanDetailProfileART(c echo.Context) error {
 	pendidikanterakhir := c.FormValue("pendidikanterakhir")
 	beratbadan := c.FormValue("beratbadan")
 	tinggibadan := c.FormValue("tinggibadan")
-	agama := c.FormValue("agama")
+	aislam := c.FormValue("aislam")
+	akatolik := c.FormValue("akatolik")
+	akristen := c.FormValue("akristen")
+	ahindu := c.FormValue("ahindu")
+	abuddha := c.FormValue("abuddha")
+	akonghucu := c.FormValue("akonghucu")
 	tkmenginap := c.FormValue("tkmenginap")
 	tkwarnen := c.FormValue("tkwarnenr")
 	hewan := c.FormValue("hewan")
@@ -247,6 +252,12 @@ func SimpanDetailProfileART(c echo.Context) error {
 	ii, _ := strconv.Atoi(iduser)
 	bbi, _ := strconv.Atoi(beratbadan)
 	tti, _ := strconv.Atoi(tinggibadan)
+	aii, _ := strconv.Atoi(aislam)
+	akti, _ := strconv.Atoi(akatolik)
+	akri, _ := strconv.Atoi(akristen)
+	ahi, _ := strconv.Atoi(ahindu)
+	abi, _ := strconv.Atoi(abuddha)
+	akhi, _ := strconv.Atoi(akonghucu)
 	tmi, _ := strconv.Atoi(tkmenginap)
 	twi, _ := strconv.Atoi(tkwarnen)
 	hi, _ := strconv.Atoi(hewan)
@@ -257,7 +268,7 @@ func SimpanDetailProfileART(c echo.Context) error {
 	si, _ := strconv.Atoi(ssingle)
 	smi, _ := strconv.Atoi(smarried)
 
-	result, err := models.SimpanDetailProfileART(ii, pendidikanterakhir, bbi, tti, agama, tmi, twi, hi, mji, spmi, mbi, mi, si, smi)
+	result, err := models.SimpanDetailProfileART(ii, pendidikanterakhir, bbi, tti, aii, akti, akri, ahi, abi, akhi, tmi, twi, hi, mji, spmi, mbi, mi, si, smi)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -283,7 +294,12 @@ func UpdateUserDetailProfileART(c echo.Context) error {
 	pendidikanterakhir := c.FormValue("pendidikanterakhir")
 	beratbadan := c.FormValue("beratbadan")
 	tinggibadan := c.FormValue("tinggibadan")
-	agama := c.FormValue("agama")
+	aislam := c.FormValue("aislam")
+	akatolik := c.FormValue("akatolik")
+	akristen := c.FormValue("akristen")
+	ahindu := c.FormValue("ahindu")
+	abuddha := c.FormValue("abuddha")
+	akonghucu := c.FormValue("akonghucu")
 	tkmenginap := c.FormValue("tkmenginap")
 	tkwarnen := c.FormValue("tkwarnen")
 	hewan := c.FormValue("hewan")
@@ -297,6 +313,12 @@ func UpdateUserDetailProfileART(c echo.Context) error {
 	ii, _ := strconv.Atoi(iduser)
 	bi, _ := strconv.Atoi(beratbadan)
 	ti, _ := strconv.Atoi(tinggibadan)
+	aii, _ := strconv.Atoi(aislam)
+	akti, _ := strconv.Atoi(akatolik)
+	akri, _ := strconv.Atoi(akristen)
+	ahi, _ := strconv.Atoi(ahindu)
+	abi, _ := strconv.Atoi(abuddha)
+	akhi, _ := strconv.Atoi(akonghucu)
 	tmi, _ := strconv.Atoi(tkmenginap)
 	twi, _ := strconv.Atoi(tkwarnen)
 	hi, _ := strconv.Atoi(hewan)
@@ -307,7 +329,7 @@ func UpdateUserDetailProfileART(c echo.Context) error {
 	si, _ := strconv.Atoi(ssingle)
 	smi, _ := strconv.Atoi(smarried)
 
-	result, err := models.UpdateUserDetailProfileART(ii, pendidikanterakhir, bi, ti, agama, tmi, twi, hi, mji, spmi, mbi, mi, si, smi)
+	result, err := models.UpdateUserDetailProfileART(ii, pendidikanterakhir, bi, ti, aii, akti, akri, ahi, abi, akhi, tmi, twi, hi, mji, spmi, mbi, mi, si, smi)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -334,8 +356,10 @@ func SimpanDetailKerjaART(c echo.Context) error {
 	ksi, _ := strconv.Atoi(ksupir)
 	kobi, _ := strconv.Atoi(kofficeboy)
 	ktki, _ := strconv.Atoi(ktukangkebun)
+	gai, _ := strconv.Atoi(gajiawal)
+	gaki, _ := strconv.Atoi(gajiakhir)
 
-	result, err := models.SimpanDetailKerjaART(ii, kpi, kbi, ksci, ksi, kobi, ktki, pengalaman, gajiawal, gajiakhir)
+	result, err := models.SimpanDetailKerjaART(ii, kpi, kbi, ksci, ksi, kobi, ktki, pengalaman, gai, gaki)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -356,6 +380,69 @@ func DataARTbyKategori(c echo.Context) error {
 	kategori := c.FormValue("kategori")
 
 	result, err := models.DataARTbyKategori(kategori)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func DataARTbyFK(c echo.Context) error {
+	kategori := c.FormValue("kategori")
+	idmajikan := c.FormValue("idmajikan")
+	aislam := c.FormValue("aislam")
+	akatolik := c.FormValue("akatolik")
+	akristen := c.FormValue("akristen")
+	ahindu := c.FormValue("ahindu")
+	abuddha := c.FormValue("abuddha")
+	akonghucu := c.FormValue("akonghucu")
+	tkmenginap := c.FormValue("tkmenginap")
+	tkwarnen := c.FormValue("tkwarnen")
+	hewan := c.FormValue("hewan")
+	mabukjalan := c.FormValue("mabukjalan")
+	sepedamotor := c.FormValue("sepedamotor")
+	mobil := c.FormValue("mobil")
+	masak := c.FormValue("masak")
+	ssingle := c.FormValue("ssingle")
+	smarried := c.FormValue("smarried")
+	kprt := c.FormValue("kprt")
+	kbabysitter := c.FormValue("kbabysitter")
+	kseniorcare := c.FormValue("kseniorcare")
+	ksupir := c.FormValue("ksupir")
+	kofficeboy := c.FormValue("kofficeboy")
+	ktukangkebun := c.FormValue("ktukangkebun")
+	gajiawal := c.FormValue("gajiawal")
+	gajiakhir := c.FormValue("gajiakhir")
+	jarak := c.FormValue("jarak")
+
+	imi, _ := strconv.Atoi(idmajikan)
+	aii, _ := strconv.Atoi(aislam)
+	akti, _ := strconv.Atoi(akatolik)
+	akri, _ := strconv.Atoi(akristen)
+	ahi, _ := strconv.Atoi(ahindu)
+	abi, _ := strconv.Atoi(abuddha)
+	akhi, _ := strconv.Atoi(akonghucu)
+	tkmi, _ := strconv.Atoi(tkmenginap)
+	tkwi, _ := strconv.Atoi(tkwarnen)
+	hi, _ := strconv.Atoi(hewan)
+	mji, _ := strconv.Atoi(mabukjalan)
+	spdmi, _ := strconv.Atoi(sepedamotor)
+	mbi, _ := strconv.Atoi(mobil)
+	mi, _ := strconv.Atoi(masak)
+	ssi, _ := strconv.Atoi(ssingle)
+	smi, _ := strconv.Atoi(smarried)
+	kpi, _ := strconv.Atoi(kprt)
+	kbsi, _ := strconv.Atoi(kbabysitter)
+	ksci, _ := strconv.Atoi(kseniorcare)
+	ksi, _ := strconv.Atoi(ksupir)
+	kobi, _ := strconv.Atoi(kofficeboy)
+	ktki, _ := strconv.Atoi(ktukangkebun)
+	gawi, _ := strconv.Atoi(gajiawal)
+	gaki, _ := strconv.Atoi(gajiakhir)
+	ji, _ := strconv.Atoi(jarak)
+
+	result, err := models.DataARTbyFK(kategori, imi, aii, akti, akri, ahi, abi, akhi, tkmi, tkwi, hi, mji, spdmi, mbi, mi, ssi, smi, kpi, kbsi, ksci, ksi, kobi, ktki, gawi, gaki, ji)
+
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -394,8 +481,10 @@ func UpdateUserDetailKerja(c echo.Context) error {
 	ksi, _ := strconv.Atoi(ksupir)
 	kobi, _ := strconv.Atoi(kofficeboy)
 	ktki, _ := strconv.Atoi(ktukangkebun)
+	gai, _ := strconv.Atoi(gajiawal)
+	gaki, _ := strconv.Atoi(gajiakhir)
 
-	result, err := models.UpdateUserDetailKerja(ii, kpi, kbi, ksci, ksi, kobi, ktki, pengalaman, gajiawal, gajiakhir)
+	result, err := models.UpdateUserDetailKerja(ii, kpi, kbi, ksci, ksi, kobi, ktki, pengalaman, gai, gaki)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -474,29 +563,29 @@ func DataReviewMajikan(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func SimpanSertifikatPelatihan(c echo.Context) error {
-	iduser := c.FormValue("iduser")
-	sertifpath := c.FormValue("sertifpath")
-
-	ii, _ := strconv.Atoi(iduser)
-
-	result, err := models.SimpanSertifikatPelatihan(ii, sertifpath)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, result)
-}
-
-func DataSertifPelatihanUser(c echo.Context) error {
-	iduser := c.FormValue("iduser")
-
-	ii, _ := strconv.Atoi(iduser)
-
-	result, err := models.DataSertifPelatihanUser(ii)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, result)
-}
+//func SimpanSertifikatPelatihan(c echo.Context) error {
+//	iduser := c.FormValue("iduser")
+//	sertifpath := c.FormValue("sertifpath")
+//
+//	ii, _ := strconv.Atoi(iduser)
+//
+//	result, err := models.SimpanSertifikatPelatihan(ii, sertifpath)
+//	if err != nil {
+//		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+//	}
+//
+//	return c.JSON(http.StatusOK, result)
+//}
+//
+//func DataSertifPelatihanUser(c echo.Context) error {
+//	iduser := c.FormValue("iduser")
+//
+//	ii, _ := strconv.Atoi(iduser)
+//
+//	result, err := models.DataSertifPelatihanUser(ii)
+//	if err != nil {
+//		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+//	}
+//
+//	return c.JSON(http.StatusOK, result)
+//}

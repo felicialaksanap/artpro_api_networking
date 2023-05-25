@@ -33,6 +33,8 @@ func SimpanLowonganKerja(c echo.Context) error {
 	statusloker := c.FormValue("statusloker")
 
 	ii, _ := strconv.Atoi(iduser)
+	gai, _ := strconv.Atoi(gajiawal)
+	gaki, _ := strconv.Atoi(gajiakhir)
 	kpi, _ := strconv.Atoi(kprt)
 	kbi, _ := strconv.Atoi(kbabysitter)
 	ksci, _ := strconv.Atoi(kseniorcare)
@@ -50,7 +52,7 @@ func SimpanLowonganKerja(c echo.Context) error {
 	smi, _ := strconv.Atoi(smarried)
 	sti, _ := strconv.Atoi(statusloker)
 
-	result, err := models.SimpanLowonganKerja(ii, judulloker, gajiawal, gajiakhir, informasi, tugas, kpi, kbi, ksci, ksi, kobi, ktki, hi, mi, mji, spdi, mbi, tmi, twi, ssi, smi, tglpost, sti)
+	result, err := models.SimpanLowonganKerja(ii, judulloker, gai, gaki, informasi, tugas, kpi, kbi, ksci, ksi, kobi, ktki, hi, mi, mji, spdi, mbi, tmi, twi, ssi, smi, tglpost, sti)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
@@ -135,6 +137,8 @@ func UpdateLowonganKerja(c echo.Context) error {
 	tglpost := c.FormValue("tglpost")
 
 	ili, _ := strconv.Atoi(idloker)
+	gai, _ := strconv.Atoi(gajiawal)
+	gaki, _ := strconv.Atoi(gajiakhir)
 	kpi, _ := strconv.Atoi(kprt)
 	kbi, _ := strconv.Atoi(kbabysitter)
 	ksci, _ := strconv.Atoi(kseniorcare)
@@ -151,7 +155,7 @@ func UpdateLowonganKerja(c echo.Context) error {
 	ssi, _ := strconv.Atoi(ssingle)
 	smi, _ := strconv.Atoi(smarried)
 
-	result, err := models.UpdateLowonganKerja(ili, judulloker, gajiawal, gajiakhir, informasi, tugas, kpi, kbi, ksci, ksi, kobi, ktki, hi, mi, mji, spdi, mbi, tmi, twi, ssi, smi, tglpost)
+	result, err := models.UpdateLowonganKerja(ili, judulloker, gai, gaki, informasi, tugas, kpi, kbi, ksci, ksi, kobi, ktki, hi, mi, mji, spdi, mbi, tmi, twi, ssi, smi, tglpost)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
