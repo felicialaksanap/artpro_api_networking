@@ -156,47 +156,6 @@ func DataLowonganKerjaperUser(iduser int) (Response, error) { // menampilkan sem
 	return res, nil
 }
 
-func DataLowonganKerjaperIdLoker(iduser int) (Response, error) { // menampilkan semua loker yang dibuat oleh majikan
-	var obj LowonganKerja
-	var arrobj []LowonganKerja
-	var res Response
-
-	con := db.CreateCon()
-
-	sqlStatemet := "SELECT lk.idloker, lk.iduser, lk.judulloker, lk.gajiawal, lk.gajiakhir, lk.informasi, lk.tugas, lk.kprt, lk.kbabysitter, lk.kseniorcare, lk.ksupir, lk.kofficeboy, lk.ktukangkebun, lk.hewan, lk.masak, lk.mabukjalan, lk.sepedamotor, lk.mobil, lk.tkmenginap, lk.tkwarnen, lk.tglpost, lk.statusloker, up.namalengkap, up.jeniskelamin, ud.kecamatan, ud.kota FROM lowongankerja lk JOIN userprofile up on lk.iduser = uP.iduser JOIN userdomisili ud on lk.iduser = ud.iduser WHERE lk.idloker = ?"
-
-	rows, err := con.Query(sqlStatemet, iduser)
-
-	defer rows.Close()
-
-	if err != nil {
-		log.Printf(err.Error())
-		return res, err
-	}
-
-	for rows.Next() {
-		err = rows.Scan(&obj.IdLoker, &obj.IdUser, &obj.JudulLoker, &obj.GajiAwal, &obj.GajiAkhir,
-			&obj.Informasi, &obj.Tugas, &obj.KPrt, &obj.KBabysitter, &obj.KSeniorcare,
-			&obj.KSupir, &obj.KOfficeboy, &obj.KTukangkebun, &obj.Hewan, &obj.Masak,
-			&obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil, &obj.TKMenginap, &obj.TKWarnen,
-			&obj.TglPost, &obj.StatusLoker, &obj.NamaLengkap, &obj.JenisKelamin,
-			&obj.Kecamatan, &obj.Kota)
-
-		if err != nil {
-			log.Printf(err.Error())
-			return res, err
-		}
-
-		arrobj = append(arrobj, obj)
-	}
-	log.Printf("berhasil")
-	res.Status = http.StatusOK
-	res.Message = "Sukses"
-	res.Data = arrobj
-
-	return res, nil
-}
-
 func UpdateStatusLoker(idloker int, statusloker int, tglpost string) (Response, error) { // untuk update status loker aktif atau tidak aktif
 	var res Response
 
@@ -262,3 +221,47 @@ func UpdateLowonganKerja(idloker int, judulloker string, gajiawal int, gajiakhir
 
 	return res, nil
 }
+
+type DataLokerFilter struct {
+	IdLoker          int     `json:"idloker"`
+	Innerproduct     float64 `json:"innerproduct"`
+	X                float64 `json:"x"`
+	Y                float64 `json:"y"`
+	Cosinesimilarity float64 `json:"cosinesimilarity"`
+	IdMajikan        int     `json:"idmajikan"`
+	Gajiawal         int     `json:"gajiawal"`
+	Gajiakhir        int     `json:"gajiakhir"`
+	Informasi        string  `json:"informasi"`
+	Tugas            string  `json:"tugas"`
+	Kprt             int     `json:"kprt"`
+	Kbabysitter      int     `json:"kbabysitter"`
+	Kseniorcare      int     `json:"kseniorcare"`
+	Ksupir           int     `json:"ksupir"`
+	Kofficeboy       int     `json:"kofficeboy"`
+	Ktukangkebun     int     `json:"ktukangkebun"`
+	Hewan            int     `json:"hewan"`
+	Masak            int     `json:"masak"`
+	Mabukjalan       int     `json:"mabukjalan"`
+	Sepedamotor      int     `json:"sepedamotor"`
+	Mobil            int     `json:"mobil"`
+	Tkmenginap       int     `json:"tkmenginap"`
+	Tkwarnen         int     `json:"tkwarnen"`
+	Ssingle          int     `json:"ssingle"`
+	Smarried         int     `json:"smarried"`
+	Tglpost          string  `json:"tglpost"`
+	Namalengkap      string  `json:"namalengkap"`
+	Jeniskelamin     string  `json:"jeniskelamin"`
+	Kecamatan        string  `json:"kecamatan"`
+	Kota             string  `json:"kota"`
+}
+
+//func DataLokerbyFilter(idloker int, kprt int, kbabysitter int, kseniorcare int,
+//	ksupir int, kofficeboy int, ktukangkebun int, hewan int,
+//	masak int, mabukjalan int, sepedamotor int, mobil int,
+//	tkmenginap int, tkwarnen int, ssingle int, smarried int,
+//	gajiawal float64, gajiakhir float64) (Response, error) {
+//	var obj DataLokerFilter
+//	var arrobj []DataLokerFilter
+//	var res Response
+//
+//}

@@ -54,6 +54,8 @@ func Init() *echo.Echo {
 	e.GET("/alldatadetailkerjaart", controllers.DataAllDetailKerjaART)
 	e.GET("/dataartbykategori", controllers.DataARTbyKategori)
 	e.GET("/dataartbyfk", controllers.DataARTbyFK)
+	e.GET("/makeandcopytable", controllers.CreateAndInsertTableTemp)
+	e.PUT("updatejarak", controllers.UpdateJarak)
 	e.GET("/datauserdetailkerjaart", controllers.DataUserDetailKerjaART)
 	e.PUT("/edituserdetailkerjaart", controllers.UpdateUserDetailKerja)
 	// ==== END ====
@@ -62,7 +64,6 @@ func Init() *echo.Echo {
 	e.POST("/addlowongankerja", controllers.SimpanLowonganKerja)
 	e.GET("/alldatalowongankerja", controllers.DataAllLowonganKerja)
 	e.GET("/datalokerperuser", controllers.DataLowonganKerjaperUser)
-	e.GET("/datalokerperid", controllers.DataLowonganKerjaperIdLoker)
 	e.PUT("/editstatusloker", controllers.UpdateStatusLoker)
 	e.PUT("/editlowongankerja", controllers.UpdateLowonganKerja)
 	// === END ===
@@ -82,6 +83,11 @@ func Init() *echo.Echo {
 	//e.POST("/addsertifpath", controllers.SimpanSertifikatPelatihan)
 	//e.GET("/datasertifpelatihanuser", controllers.DataSertifPelatihanUser)
 	// ===== END =====
+
+	// ===== BERITA ======
+	e.POST("/addberitatips", controllers.SimpanBerita)
+	e.GET("/getallberita", controllers.DataAllBerita)
+	// ===== END OF BERITA =====
 
 	return e
 }

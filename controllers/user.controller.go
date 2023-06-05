@@ -414,6 +414,7 @@ func DataARTbyFK(c echo.Context) error {
 	gajiawal := c.FormValue("gajiawal")
 	gajiakhir := c.FormValue("gajiakhir")
 	jarak := c.FormValue("jarak")
+	updatestatusjarak := c.FormValue("updatestatusjarak")
 
 	imi, _ := strconv.Atoi(idmajikan)
 	aii, _ := strconv.Atoi(aislam)
@@ -441,8 +442,38 @@ func DataARTbyFK(c echo.Context) error {
 	gaki, _ := strconv.Atoi(gajiakhir)
 	ji, _ := strconv.Atoi(jarak)
 
-	result, err := models.DataARTbyFK(kategori, imi, aii, akti, akri, ahi, abi, akhi, tkmi, tkwi, hi, mji, spdmi, mbi, mi, ssi, smi, kpi, kbsi, ksci, ksi, kobi, ktki, gawi, gaki, ji)
+	result, err := models.DataARTbyFK(kategori, imi, aii, akti, akri, ahi, abi, akhi, tkmi, tkwi, hi, mji, spdmi, mbi, mi, ssi, smi, kpi, kbsi, ksci, ksi, kobi, ktki, gawi, gaki, ji, updatestatusjarak)
 
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func CreateAndInsertTableTemp(c echo.Context) error {
+	kategori := c.FormValue("kategori")
+	idmajikan := c.FormValue("idmajikan")
+
+	ii, _ := strconv.Atoi(idmajikan)
+	result, err := models.CreateAndInsertTableTemp(kategori, ii)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateJarak(c echo.Context) error {
+	idmajikan := c.FormValue("idmajikan")
+	idart := c.FormValue("idart")
+	jarak := c.FormValue("jarak")
+
+	imi, _ := strconv.Atoi(idmajikan)
+	iai, _ := strconv.Atoi(idart)
+	jf, _ := strconv.ParseFloat(jarak, 64)
+
+	result, err := models.UpdateJarak(imi, iai, jf)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}

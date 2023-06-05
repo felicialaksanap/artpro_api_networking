@@ -82,19 +82,6 @@ func DataLowonganKerjaperUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-func DataLowonganKerjaperIdLoker(c echo.Context) error {
-	idloker := c.FormValue("idloker")
-
-	il, _ := strconv.Atoi(idloker)
-
-	result, err := models.DataLowonganKerjaperUser(il)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
-	}
-
-	return c.JSON(http.StatusOK, result)
-}
-
 func UpdateStatusLoker(c echo.Context) error {
 	idloker := c.FormValue("idloker")
 	statusloker := c.FormValue("statusloker")
