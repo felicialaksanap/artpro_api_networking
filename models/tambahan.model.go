@@ -78,3 +78,76 @@ func DataAllBerita() (Response, error) {
 
 	return res, nil
 }
+
+func SimpanInfo(judul string, isi string, url string, tglpost string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "INSERT INTO infopelatihan (judul, isi, url, tglpost) VALUES (?, ?, ?, ?)"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(judul, isi, url, tglpost)
+	if err != nil {
+		return res, err
+	}
+
+	getIdLast, err := result.LastInsertId()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"getIdLast": getIdLast,
+	}
+
+	return res, nil
+}
+
+type InfoObject struct {
+	Idinfo  int    `json:"idinfo"`
+	Judul   string `json:"judul"`
+	Isi     string `json:"isi"`
+	URL     string `json:"url"`
+	Tglpost string `json:"tglpost"`
+}
+
+func DataALLInfo() (Response, error) {
+	var obj InfoObject
+	var arrobj []InfoObject
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT * FROM infopelatihan ORDER BY tglpost DESC"
+
+	rows, err := con.Query(sqlStatement)
+	defer rows.Close()
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.Idinfo, &obj.Judul, &obj.Isi, &obj.URL, &obj.Tglpost)
+
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		arrobj = append(arrobj, obj)
+	}
+	log.Printf("berhasil")
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = arrobj
+
+	return res, nil
+}

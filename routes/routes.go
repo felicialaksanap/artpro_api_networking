@@ -41,6 +41,7 @@ func Init() *echo.Echo {
 	e.POST("/adduserdomisili", controllers.SimpanDomisiliUser)
 	e.GET("/datauserdomisili", controllers.DataUserDomisili)
 	e.PUT("/edituserdomisili", controllers.UpdateUserDomisili)
+	e.GET("/getlonglatuser", controllers.DataLongLat)
 	// ===== END ======
 
 	// ==== DETAIL PROFILE ART =====
@@ -66,10 +67,16 @@ func Init() *echo.Echo {
 	e.GET("/datalokerperuser", controllers.DataLowonganKerjaperUser)
 	e.PUT("/editstatusloker", controllers.UpdateStatusLoker)
 	e.PUT("/editlowongankerja", controllers.UpdateLowonganKerja)
+	e.GET("/getlokerfilter", controllers.DataLokerbyFilter)
+	e.GET("/createcopytable", controllers.CreateAndCopyTable)
+	e.PUT("/updatejarakloker", controllers.UpdateStatusJarakLoker)
 	// === END ===
 
 	// ===== KONTAK USER =====     // Majikan melakukan call ke ART
 	e.POST("/addkontakuser", controllers.SimpanKontakUser)
+	e.GET("/alldatakontakart", controllers.DataKontakART)
+	e.GET("/alldatakontakmajikan", controllers.DataKontakMajikan)
+	e.GET("/getinfokontak", controllers.KontakART)
 	// ==== END ====
 
 	// ===== PENILAIAN =====
@@ -88,6 +95,11 @@ func Init() *echo.Echo {
 	e.POST("/addberitatips", controllers.SimpanBerita)
 	e.GET("/getallberita", controllers.DataAllBerita)
 	// ===== END OF BERITA =====
+
+	// ===== INFO PELATIHAN =====
+	e.POST("/addberitainfo", controllers.SimpanInfo)
+	e.GET("/getallinfo", controllers.DataAllInfo)
+	// ===== END OF INFO ======
 
 	return e
 }

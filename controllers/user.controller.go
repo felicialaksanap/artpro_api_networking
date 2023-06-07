@@ -228,6 +228,19 @@ func UpdateUserDomisili(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
+func DataLongLat(c echo.Context) error {
+	iduser := c.FormValue("iduser")
+
+	ii, _ := strconv.Atoi(iduser)
+
+	result, err := models.DataLongLatUser(ii)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
 func SimpanDetailProfileART(c echo.Context) error {
 	iduser := c.FormValue("iduser")
 	pendidikanterakhir := c.FormValue("pendidikanterakhir")
@@ -532,6 +545,45 @@ func SimpanKontakUser(c echo.Context) error {
 	iai, _ := strconv.Atoi(idart)
 
 	result, err := models.SimpanKontakuser(imi, iai, waktukontak)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func DataKontakART(c echo.Context) error {
+	idmajikan := c.FormValue("idmajikan")
+
+	ii, _ := strconv.Atoi(idmajikan)
+
+	result, err := models.DataKontakART(ii)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func DataKontakMajikan(c echo.Context) error {
+	idart := c.FormValue("idart")
+
+	ii, _ := strconv.Atoi(idart)
+
+	result, err := models.DataKontakMajikan(ii)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func KontakART(c echo.Context) error {
+	idart := c.FormValue("idart")
+
+	ii, _ := strconv.Atoi(idart)
+
+	result, err := models.KontakArt(ii)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}

@@ -149,3 +149,79 @@ func UpdateLowonganKerja(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, result)
 }
+
+func DataLokerbyFilter(c echo.Context) error {
+	idart := c.FormValue("idart")
+	kprt := c.FormValue("kprt")
+	kbabysitter := c.FormValue("kbabysitter")
+	kseniorcare := c.FormValue("kseniorcare")
+	ksupir := c.FormValue("ksupir")
+	kofficeboy := c.FormValue("kofficeboy")
+	ktukangkebun := c.FormValue("ktukangkebun")
+	hewan := c.FormValue("hewan")
+	masak := c.FormValue("masak")
+	mabukjalan := c.FormValue("mabukjalan")
+	sepedamotor := c.FormValue("sepedamotor")
+	mobil := c.FormValue("mobil")
+	tkmenginap := c.FormValue("tkmenginap")
+	tkwarnen := c.FormValue("tkwarnen")
+	ssingle := c.FormValue("ssingle")
+	smarried := c.FormValue("smarried")
+	gajiawal := c.FormValue("gajiawal")
+	gajiakhir := c.FormValue("gajiakhir")
+	jarak := c.FormValue("jarak")
+	updatejarak := c.FormValue("updatejarak")
+
+	kpi, _ := strconv.Atoi(kprt)
+	kbsi, _ := strconv.Atoi(kbabysitter)
+	ksci, _ := strconv.Atoi(kseniorcare)
+	ksi, _ := strconv.Atoi(ksupir)
+	kobi, _ := strconv.Atoi(kofficeboy)
+	ktki, _ := strconv.Atoi(ktukangkebun)
+	hi, _ := strconv.Atoi(hewan)
+	mi, _ := strconv.Atoi(masak)
+	mji, _ := strconv.Atoi(mabukjalan)
+	spdmi, _ := strconv.Atoi(sepedamotor)
+	mbi, _ := strconv.Atoi(mobil)
+	tkmi, _ := strconv.Atoi(tkmenginap)
+	tkwi, _ := strconv.Atoi(tkwarnen)
+	ssi, _ := strconv.Atoi(ssingle)
+	smi, _ := strconv.Atoi(smarried)
+	gawi, _ := strconv.Atoi(gajiawal)
+	gaki, _ := strconv.Atoi(gajiakhir)
+	ji, _ := strconv.ParseFloat(jarak, 64)
+
+	result, err := models.DataLokerbyFilter(idart, kpi, kbsi, ksci, ksi, kobi, ktki, hi, mi, mji, spdmi, mbi, tkmi, tkwi, ssi, smi, gawi, gaki, ji, updatejarak)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func CreateAndCopyTable(c echo.Context) error {
+	idart := c.FormValue("idart")
+
+	result, err := models.CreateAndCopyTable(idart)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateStatusJarakLoker(c echo.Context) error {
+	idart := c.FormValue("idart")
+	idloker := c.FormValue("idloker")
+	jarak := c.FormValue("jarak")
+
+	idi, _ := strconv.Atoi(idloker)
+	ji, _ := strconv.ParseFloat(jarak, 64)
+
+	result, err := models.UpdateJarakLoker(idart, idi, ji)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
