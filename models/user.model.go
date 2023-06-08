@@ -1752,16 +1752,17 @@ func SimpanKontakuser(idmajikan int, idart int, waktukontak string) (Response, e
 }
 
 type DataKontakARTObj struct {
-	Idart        int    `json:"idart"`
-	Namalengkap  string `json:"namalengkap"`
-	Tanggallahir string `json:"tanggallahir"`
-	Telephone    string `json:"telephone"`
-	Kprt         int    `json:"kprt"`
-	Kbabysitter  int    `json:"kbabysitter"`
-	Kseniorcare  int    `json:"kseniorcare"`
-	Ksupir       int    `json:"ksupir"`
-	Kofficeboy   int    `json:"kofficeboy"`
-	Ktukangkebun int    `json:"ktukangkebun"`
+	Idart        int     `json:"idart"`
+	Namalengkap  string  `json:"namalengkap"`
+	Tanggallahir string  `json:"tanggallahir"`
+	Telephone    string  `json:"telephone"`
+	Kprt         int     `json:"kprt"`
+	Kbabysitter  int     `json:"kbabysitter"`
+	Kseniorcare  int     `json:"kseniorcare"`
+	Ksupir       int     `json:"ksupir"`
+	Kofficeboy   int     `json:"kofficeboy"`
+	Ktukangkebun int     `json:"ktukangkebun"`
+	Rating       float64 `json:"rating"`
 }
 
 func DataKontakART(idmajikan int) (Response, error) {
@@ -1771,12 +1772,14 @@ func DataKontakART(idmajikan int) (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT ka.idart as idart, up.namalengkap, up.tanggallahir, up.telephone," +
-		" dk.kprt, dk.kbabysitter, dk.kseniorcare, dk.ksupir, dk.kofficeboy, dk.ktukangkebun " +
-		"FROM kontakart ka " +
-		"JOIN userprofile up ON ka.idart = up.iduser " +
-		"JOIN detailkerjaart dk on ka.idart = dk.iduser " +
-		"WHERE ka.idmajikan = ?"
+	sqlStatement := "SELECT ka.idart as idart, up.namalengkap, up.tanggallahir, up.telephone, dk.kprt," +
+		" dk.kbabysitter, dk.kseniorcare, dk.ksupir, dk.kofficeboy, dk.ktukangkebun, AVG(p.rating)" +
+		" FROM kontakart ka" +
+		" JOIN userprofile up ON ka.idart = up.iduser" +
+		" JOIN detailkerjaart dk on ka.idart = dk.iduser" +
+		" JOIN penilaian p ON ka.idart = p.idart" +
+		" WHERE ka.idmajikan = ?" +
+		" GROUP BY ka.idart"
 
 	rows, err := con.Query(sqlStatement, idmajikan)
 
@@ -1790,7 +1793,7 @@ func DataKontakART(idmajikan int) (Response, error) {
 	for rows.Next() {
 		err = rows.Scan(&obj.Idart, &obj.Namalengkap, &obj.Tanggallahir, &obj.Telephone,
 			&obj.Kprt, &obj.Kbabysitter, &obj.Kseniorcare, &obj.Ksupir,
-			&obj.Kofficeboy, &obj.Ktukangkebun)
+			&obj.Kofficeboy, &obj.Ktukangkebun, &obj.Rating)
 
 		if err != nil {
 			log.Printf(err.Error())

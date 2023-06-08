@@ -101,5 +101,10 @@ func Init() *echo.Echo {
 	e.GET("/getallinfo", controllers.DataAllInfo)
 	// ===== END OF INFO ======
 
+	// ===== PENGADUAN ====
+	e.POST("/addpengaduan", controllers.SimpanPengaduan)
+	e.GET("/getallpengaduan", controllers.DataAllPengaduan)
+	// ==== END OF PENGADUAN =====
+
 	return e
 }

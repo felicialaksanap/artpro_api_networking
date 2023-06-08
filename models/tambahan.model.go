@@ -151,3 +151,82 @@ func DataALLInfo() (Response, error) {
 
 	return res, nil
 }
+
+func SimpanPengaduan(idmajikan int, idart int, isipengaduan string, penyelesaian string, tglpengaduan string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "INSERT INTO pengaduan (idmajikan, idart, isipengaduan, penyelesaian, tglpengaduan) VALUES (?, ?, ?, ?, ?)"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(idmajikan, idart, isipengaduan, penyelesaian, tglpengaduan)
+	if err != nil {
+		return res, err
+	}
+
+	getIdLast, err := result.LastInsertId()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"getIdLast": getIdLast,
+	}
+
+	return res, nil
+}
+
+type PengaduanObject struct {
+	Idpengaduan  int    `json:"idpengaduan"`
+	NamaMajikan  string `json:"namamajikan"`
+	NamaART      string `json:"namaart"`
+	IsiPengaduan string `json:"isipengaduan"`
+	Penyelesaian string `json:"penyelesaian"`
+	Tglpengaduan string `json:"tglpengaduan"`
+}
+
+func DataALLPengaduan() (Response, error) {
+	var obj PengaduanObject
+	var arrobj []PengaduanObject
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT p.idpengaduan, um.namalengkap as namamajikan, ua.namalengkap as namaart," +
+		" p.isipengaduan, p.penyelesaian, p.tglpengaduan" +
+		" FROM pengaduan p" +
+		" JOIN userprofile um ON p.idmajikan = um.iduser" +
+		" JOIN userprofile ua ON p.idart = ua.iduser"
+
+	rows, err := con.Query(sqlStatement)
+	defer rows.Close()
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.Idpengaduan, &obj.NamaMajikan, &obj.NamaART,
+			&obj.IsiPengaduan, &obj.Penyelesaian, &obj.Tglpengaduan)
+
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		arrobj = append(arrobj, obj)
+	}
+	log.Printf("berhasil")
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = arrobj
+
+	return res, nil
+}

@@ -4,6 +4,7 @@ import (
 	"artpro_api_networking/models"
 	"github.com/labstack/echo"
 	"net/http"
+	"strconv"
 )
 
 func SimpanBerita(c echo.Context) error {
@@ -45,6 +46,33 @@ func SimpanInfo(c echo.Context) error {
 
 func DataAllInfo(c echo.Context) error {
 	result, err := models.DataALLInfo()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func SimpanPengaduan(c echo.Context) error {
+	idmajikan := c.FormValue("idmajikan")
+	idart := c.FormValue("idart")
+	isipengaduan := c.FormValue("isipengaduan")
+	penyelesaian := c.FormValue("penyelesaian")
+	tglpengaduan := c.FormValue("tglpengaduan")
+
+	imi, _ := strconv.Atoi(idmajikan)
+	iai, _ := strconv.Atoi(idart)
+
+	result, err := models.SimpanPengaduan(imi, iai, isipengaduan, penyelesaian, tglpengaduan)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func DataAllPengaduan(c echo.Context) error {
+	result, err := models.DataALLPengaduan()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
