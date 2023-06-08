@@ -163,11 +163,12 @@ func DataAllVerifikasi(c echo.Context) error {
 
 func UpdateDataVerifikasi(c echo.Context) error {
 	statusverifikasi := c.FormValue("statusverifikasi")
+	alasan := c.FormValue("alasan")
 	iduser := c.FormValue("iduser")
 
 	ii, _ := strconv.Atoi(iduser)
 
-	result, err := models.UpdateDataVerifikasi(ii, statusverifikasi)
+	result, err := models.UpdateDataVerifikasi(ii, statusverifikasi, alasan)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}

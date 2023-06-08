@@ -469,19 +469,19 @@ func DataAllVerifikasi() (Response, error) {
 	return res, nil
 }
 
-func UpdateDataVerifikasi(iduser int, statusverifikasi string) (Response, error) {
+func UpdateDataVerifikasi(iduser int, statusverifikasi string, alasan string) (Response, error) {
 	var res Response
 
 	con := db.CreateCon()
 
-	sqlStatement := "UPDATE userverifikasi SET statusverifikasi = ? WHERE iduser = ?"
+	sqlStatement := "UPDATE userverifikasi SET statusverifikasi = ?, alasan = ? WHERE iduser = ?"
 
 	stmt, err := con.Prepare(sqlStatement)
 	if err != nil {
 		return res, err
 	}
 
-	result, err := stmt.Exec(statusverifikasi, iduser)
+	result, err := stmt.Exec(statusverifikasi, alasan, iduser)
 	if err != nil {
 		return res, err
 	}
