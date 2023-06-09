@@ -396,6 +396,7 @@ type VerifikasiUser struct {
 	FotoKTP          string `json:"fotoktp"`
 	SelfieKTP        string `json:"selfiektp"`
 	StatusVerifikasi string `json:"statusverifikasi"`
+	Alasan           string `json:"alasan"`
 }
 
 func SimpanDataVerifikasi(iduser int, nik string, tempatlahir string, tanggallahir string,
@@ -440,7 +441,7 @@ func DataAllVerifikasi() (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT uv.iduser, uv.nik, up.namalengkap, uv.tempatlahir, uv.tanggallahir, up.jeniskelamin, uv.alamat, uv.kecamatan, uv.kelurahan, uv.rt, uv.rw, uv.fotoktp, uv.selfiektp, uv.statusverifikasi FROM userverifikasi uv JOIN userprofile up on uv.iduser = up.iduser"
+	sqlStatement := "SELECT uv.iduser, uv.nik, up.namalengkap, uv.tempatlahir, uv.tanggallahir, up.jeniskelamin, uv.alamat, uv.kecamatan, uv.kelurahan, uv.rt, uv.rw, uv.fotoktp, uv.selfiektp, uv.statusverifikasi, uv.alasan FROM userverifikasi uv JOIN userprofile up on uv.iduser = up.iduser"
 
 	rows, err := con.Query(sqlStatement)
 	if err != nil {
@@ -453,7 +454,7 @@ func DataAllVerifikasi() (Response, error) {
 		err = rows.Scan(&obj.IdUser, &obj.NIK, &obj.NamaLengkap, &obj.TempatLahir,
 			&obj.TanggalLahir, &obj.TempatLahir, &obj.Alamat, &obj.Kecamatan,
 			&obj.Kelurahan, &obj.RT, &obj.RW, &obj.FotoKTP, &obj.SelfieKTP,
-			&obj.StatusVerifikasi)
+			&obj.StatusVerifikasi, &obj.Alasan)
 
 		if err != nil {
 			return res, err

@@ -103,6 +103,7 @@ func Init() *echo.Echo {
 
 	// ===== PENGADUAN ====
 	e.POST("/addpengaduan", controllers.SimpanPengaduan)
+	e.PUT("/updatepenyelesaian", controllers.UpdatePenyelesaian)
 	e.GET("/getallpengaduan", controllers.DataAllPengaduan)
 	// ==== END OF PENGADUAN =====
 

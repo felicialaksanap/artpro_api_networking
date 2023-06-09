@@ -71,6 +71,20 @@ func SimpanPengaduan(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
+func UpdatePenyelesaian(c echo.Context) error {
+	idloker := c.FormValue("idloker")
+	penyelesaian := c.FormValue("penyelesaian")
+
+	ili, _ := strconv.Atoi(idloker)
+
+	result, err := models.UpdatePenyelesaian(ili, penyelesaian)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
 func DataAllPengaduan(c echo.Context) error {
 	result, err := models.DataALLPengaduan()
 	if err != nil {

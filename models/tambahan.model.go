@@ -183,9 +183,42 @@ func SimpanPengaduan(idmajikan int, idart int, isipengaduan string, penyelesaian
 	return res, nil
 }
 
+func UpdatePenyelesaian(idloker int, penyelesaian string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "UPDATE pengaduan SET penyelesaian = ? WHERE idpengaduan = ?"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(penyelesaian, idloker)
+	if err != nil {
+		return res, err
+	}
+
+	getIdLast, err := result.LastInsertId()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"getIdLast": getIdLast,
+	}
+
+	return res, nil
+}
+
 type PengaduanObject struct {
 	Idpengaduan  int    `json:"idpengaduan"`
+	IdMajikan    int    `json:"idmajikan"`
 	NamaMajikan  string `json:"namamajikan"`
+	IdArt        int    `json:"idart"`
 	NamaART      string `json:"namaart"`
 	IsiPengaduan string `json:"isipengaduan"`
 	Penyelesaian string `json:"penyelesaian"`
@@ -199,8 +232,8 @@ func DataALLPengaduan() (Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT p.idpengaduan, um.namalengkap as namamajikan, ua.namalengkap as namaart," +
-		" p.isipengaduan, p.penyelesaian, p.tglpengaduan" +
+	sqlStatement := "SELECT p.idpengaduan, p.idmajikan, um.namalengkap as namamajikan," +
+		" p.idart, ua.namalengkap as namaart, p.isipengaduan, p.penyelesaian, p.tglpengaduan" +
 		" FROM pengaduan p" +
 		" JOIN userprofile um ON p.idmajikan = um.iduser" +
 		" JOIN userprofile ua ON p.idart = ua.iduser"
@@ -213,7 +246,7 @@ func DataALLPengaduan() (Response, error) {
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&obj.Idpengaduan, &obj.NamaMajikan, &obj.NamaART,
+		err = rows.Scan(&obj.Idpengaduan, &obj.IdMajikan, &obj.NamaMajikan, &obj.IdArt, &obj.NamaART,
 			&obj.IsiPengaduan, &obj.Penyelesaian, &obj.Tglpengaduan)
 
 		if err != nil {
