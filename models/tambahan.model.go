@@ -263,3 +263,110 @@ func DataALLPengaduan() (Response, error) {
 
 	return res, nil
 }
+
+func SaveNotifikasi(idmajikan int, idart int, title string,
+	message string, status string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "INSERT INTO notifikasi (idmajikan, idart, title, message, status) VALUES (?, ?, ?, ?, ?)"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(idmajikan, idart, title, message, status)
+	if err != nil {
+		return res, err
+	}
+
+	getIdLast, err := result.LastInsertId()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"getIdLast": getIdLast,
+	}
+
+	return res, nil
+}
+
+type Notifikasi struct {
+	Idnotif   int    `json:"idnotif"`
+	Idmajikan int    `json:"idmajikan"`
+	Idart     int    `json:"idart"`
+	Title     string `json:"title"`
+	Message   string `json:"message"`
+	Status    string `json:"status"`
+}
+
+func GetNotifikasi(idmajikan int) (Response, error) {
+	var obj Notifikasi
+	var arrobj []Notifikasi
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT * FROM notifikasi WHERE  idmajikan = ? ORDER BY idnotif DESC"
+
+	rows, err := con.Query(sqlStatement, idmajikan)
+	defer rows.Close()
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.Idnotif, &obj.Idmajikan, &obj.Idart,
+			&obj.Title, &obj.Message, &obj.Status)
+
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		arrobj = append(arrobj, obj)
+	}
+	log.Printf("berhasil")
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = arrobj
+
+	return res, nil
+}
+
+func UpdateStatusNotif(idnotif int, status string) (Response, error) { // untuk update status loker aktif atau tidak aktif
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "UPDATE notifikasi SET status=? WHERE idnotif=?"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(status, idnotif)
+	if err != nil {
+		return res, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"rows": rowsAffected,
+	}
+
+	return res, nil
+}

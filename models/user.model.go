@@ -1194,9 +1194,62 @@ func DataARTbyKategori(kategori string) (Response, error) {
 	return res, nil
 }
 
+func DataARTbyId(idart int) (Response, error) {
+	var obj DatabyKategori
+	var arrobj []DatabyKategori
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT up.iduser as idart, namalengkap, jeniskelamin, tempatlahir, " +
+		"tanggallahir, telephone, profilepicpath, dpa.pendidikanterakhir, beratbadan, " +
+		"tinggibadan, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, " +
+		"tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, " +
+		"smarried, dka.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, " +
+		"pengalaman, gajiawal, gajiakhir, ud.latitude, longitude, AVG(p.rating) as rating " +
+		"FROM userprofile up " +
+		"JOIN detailprofileart dpa on up.iduser = dpa.iduser " +
+		"JOIN detailkerjaart dka on up.iduser = dka.iduser " +
+		"JOIN userdomisili ud on up.iduser = ud.iduser " +
+		"JOIN penilaian p on up.iduser = p.idart " +
+		"WHERE idart = ? " +
+		"GROUP BY idart " +
+		"ORDER BY rating DESC"
+
+	rows, err := con.Query(sqlStatement, idart)
+	defer rows.Close()
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.IdART, &obj.NamaLengkap, &obj.JenisKelamin, &obj.TempatLahir,
+			&obj.TanggalLahir, &obj.Telephone, &obj.ProfPicPath, &obj.Pendidikan,
+			&obj.BeratBadan, &obj.TinggiBadan, &obj.AIslam, &obj.AKatolik, &obj.AKristen,
+			&obj.AHindu, &obj.ABuddha, &obj.AKonghucu, &obj.TkMenginap,
+			&obj.TkWarnen, &obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil,
+			&obj.Masak, &obj.SSingle, &obj.SMarried, &obj.KPrt, &obj.KBabySitter,
+			&obj.KSeniorCare, &obj.KSupir, &obj.KOfficeBoy, &obj.KTukangKebun,
+			&obj.Pengalaman, &obj.GajiAwal, &obj.GajiAkhir, &obj.Latitude, &obj.Longitude, &obj.Rating)
+
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		arrobj = append(arrobj, obj)
+	}
+	log.Printf("berhasil")
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = arrobj
+
+	return res, nil
+}
+
 type DatabyFilter struct {
 	IdART            int     `json:"idart"`
-	IdMajikan        int     `json:"idmajikan"`
 	InnerProduct     float64 `json:"innerproduct"`
 	X                float64 `json:"x"`
 	Y                float64 `json:"y"`
@@ -1237,15 +1290,7 @@ type DatabyFilter struct {
 	Rating           float64 `json:"rating"`
 }
 
-func DataARTbyFK(kategori string, idmajikan int, aislam int, akatolik int,
-	akristen int, ahindu int, abuddha int, akonghucu int,
-	tkmenginap int, tkwarnen int, hewan int, mabukjalan int,
-	sepedamotor int, mobil int, masak int, ssingle int, smarried int,
-	kprt int, kbabysitter int, kseniorcare int, ksupir int,
-	kofficeboy int, ktukangkebun int, gajiawal int, gajiakhir int, jarak int, updatestatusjarak string) (Response, error) {
-
-	var obj DatabyFilter
-	var arrobj []DatabyFilter
+func PrepareTableDataFK(kategori string, idmajikan int) (Response, error) {
 	var res Response
 
 	con := db.CreateCon()
@@ -1254,268 +1299,28 @@ func DataARTbyFK(kategori string, idmajikan int, aislam int, akatolik int,
 	id := strconv.Itoa(idmajikan)
 	tablename := name + id
 
-	sqlStatement := ""
-
-	if updatestatusjarak == "false" {
-		sqlStatement = "CREATE TABLE IF NOT EXISTS " + tablename + " (iduser int, aislam int, akatolik int, " +
-			"akristen int, ahindu int, abuddha int, akonghucu int, tkmenginap int, " +
-			"tkwarnen int, hewan int, mabukjalan int, sepedamotor int, mobil int, masak int, ssingle int," +
-			"smarried int, kprt int, kbabysitter int, kseniorcare int, ksupir int, kofficeboy int," +
-			" ktukangkebun int, gajiawal double, gajiakhir double)"
-
-		_, err := con.Exec(sqlStatement)
-		if err != nil {
-			log.Printf(err.Error())
-			return res, nil
-		}
-
-		if kategori == "prt" {
-			sqlStatement = "INSERT INTO " + tablename +
-				" SELECT dp.iduser, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, " +
-				"tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, " +
-				"smarried, dk.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, " +
-				"gajiawal, gajiakhir " +
-				"FROM detailprofileart dp " +
-				"JOIN detailkerjaart dk on dp.iduser = dk.iduser " +
-				"WHERE kprt=1"
-			_, err = con.Exec(sqlStatement)
-			if err != nil {
-				log.Printf(err.Error())
-				return res, nil
-			}
-		} else if kategori == "babysitter" {
-			sqlStatement = "INSERT INTO " + tablename +
-				" SELECT dp.iduser, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, " +
-				"tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, " +
-				"smarried, dk.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, " +
-				"gajiawal, gajiakhir " +
-				"FROM detailprofileart dp " +
-				"JOIN detailkerjaart dk on dp.iduser = dk.iduser " +
-				"WHERE kbabysitter=1"
-			_, err = con.Exec(sqlStatement)
-			if err != nil {
-				log.Printf(err.Error())
-				return res, nil
-			}
-		} else if kategori == "seniorcare" {
-			sqlStatement = "INSERT INTO " + tablename +
-				" SELECT dp.iduser, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, " +
-				"tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, " +
-				"smarried, dk.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, " +
-				"gajiawal, gajiakhir " +
-				"FROM detailprofileart dp " +
-				"JOIN detailkerjaart dk on dp.iduser = dk.iduser " +
-				"WHERE kseniorcare=1"
-			_, err = con.Exec(sqlStatement)
-			if err != nil {
-				log.Printf(err.Error())
-				return res, nil
-			}
-		} else if kategori == "supir" {
-			sqlStatement = "INSERT INTO " + tablename +
-				" SELECT dp.iduser, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, " +
-				"tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, " +
-				"smarried, dk.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, " +
-				"gajiawal, gajiakhir " +
-				"FROM detailprofileart dp " +
-				"JOIN detailkerjaart dk on dp.iduser = dk.iduser " +
-				"WHERE ksupir=1"
-			_, err = con.Exec(sqlStatement)
-			if err != nil {
-				log.Printf(err.Error())
-				return res, nil
-			}
-		} else if kategori == "officeboy" {
-			sqlStatement = "INSERT INTO " + tablename +
-				" SELECT dp.iduser, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, " +
-				"tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, " +
-				"smarried, dk.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, " +
-				"gajiawal, gajiakhir " +
-				"FROM detailprofileart dp " +
-				"JOIN detailkerjaart dk on dp.iduser = dk.iduser " +
-				"WHERE kofficeboy=1"
-			_, err = con.Exec(sqlStatement)
-			if err != nil {
-				log.Printf(err.Error())
-				return res, nil
-			}
-		} else if kategori == "tukangkebun" {
-			sqlStatement = "INSERT INTO " + tablename +
-				" SELECT dp.iduser, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, " +
-				"tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, " +
-				"smarried, dk.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, " +
-				"gajiawal, gajiakhir " +
-				"FROM detailprofileart dp " +
-				"JOIN detailkerjaart dk on dp.iduser = dk.iduser " +
-				"WHERE ktukangkebun=1"
-			_, err = con.Exec(sqlStatement)
-			if err != nil {
-				log.Printf(err.Error())
-				return res, nil
-			}
-		}
-
-		sqlStatement = "ALTER TABLE " + tablename + " ADD jarak double NOT NULL"
-		_, err = con.Exec(sqlStatement)
-		if err != nil {
-			log.Printf(err.Error())
-			return res, nil
-		}
-	}
-
-	sqlStatement = "INSERT INTO " + tablename + " (iduser, aislam, akatolik, akristen, ahindu, " +
-		"abuddha, akonghucu, tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, " +
-		"masak, ssingle, smarried, kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, " +
-		"ktukangkebun, gajiawal, gajiakhir, jarak) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, " +
-		"?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-	_, err := con.Exec(sqlStatement, idmajikan, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, tkmenginap,
-		tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, kprt,
-		kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, gajiawal, gajiakhir, jarak)
-	if err != nil {
-		log.Printf(err.Error())
-		return res, err
-	}
-
-	sqlStatement = "UPDATE " + tablename + " SET gajiawal = (gajiawal-0)/(4000000-0), " +
-		"gajiakhir = (gajiakhir-0)/(4000000-0), jarak = (jarak-0)/(10-0)"
-	_, err = con.Exec(sqlStatement)
-	if err != nil {
-		log.Printf(err.Error())
-		return res, err
-	}
-
-	sqlStatement = "SELECT a.iduser as idart, b.iduser as idmajikan," +
-		" ((a.aislam * b.aislam) + (a.akatolik * b.akatolik) + (a.akristen * b.akristen)" +
-		" + (a.ahindu * b.ahindu) + (a.abuddha * b.abuddha) + (a.akonghucu * b.akonghucu)" +
-		" + (a.tkmenginap * b.tkmenginap) + (a.tkwarnen * b.tkwarnen) + (a.hewan * b.hewan)" +
-		" + (a.mabukjalan * b.mabukjalan) + (a.sepedamotor * b.sepedamotor) + (a.mobil * b.mobil)" +
-		" + (a.masak * b.masak) + (a.ssingle * b.ssingle) + (a.smarried * b.smarried)" +
-		" + (a.kprt * b.kprt) + (a.kbabysitter * b.kbabysitter)+ (a.kseniorcare * b.kseniorcare)" +
-		" + (a.ksupir * b.ksupir) + (a.kofficeboy * b.kofficeboy) + (a.ktukangkebun * b.ktukangkebun)" +
-		" + (a.gajiawal * b.gajiawal) + (a.gajiakhir * b.gajiakhir) + (a.jarak * b.jarak)) as innerproduct," +
-		" ((a.aislam * a.aislam) + (a.akatolik * a.akatolik) + (a.akristen * a.akristen)" +
-		" + (a.ahindu * a.ahindu) + (a.abuddha * a.abuddha) + (a.akonghucu * a.akonghucu)" +
-		" + (a.tkmenginap * a.tkmenginap) + (a.tkwarnen * a.tkwarnen) + (a.hewan * a.hewan)" +
-		" + (a.mabukjalan * a.mabukjalan) + (a.sepedamotor * a.sepedamotor) + (a.mobil * a.mobil)" +
-		" + (a.masak * a.masak) + (a.ssingle * a.ssingle) + (a.smarried * a.smarried) + (a.kprt * a.kprt)" +
-		" + (a.kbabysitter * a.kbabysitter) + (a.kseniorcare * a.kseniorcare) + (a.ksupir * a.ksupir)" +
-		" + (a.kofficeboy * a.kofficeboy) + (a.ktukangkebun * a.ktukangkebun) + (a.gajiawal * a.gajiawal)" +
-		" + (a.gajiakhir * a.gajiakhir) + (a.jarak * a.jarak)) as x," +
-		" ((b.aislam * b.aislam) + (b.akatolik * b.akatolik) + (b.akristen * b.akristen)" +
-		" + (b.ahindu * b.ahindu) + (b.abuddha * b.abuddha) + (b.akonghucu * b.akonghucu)" +
-		" + (b.tkmenginap * b.tkmenginap) + (b.tkwarnen * b.tkwarnen) + (b.hewan*b.hewan)" +
-		" + (b.mabukjalan * b.mabukjalan) + (b.sepedamotor * b.sepedamotor) + (b.mobil * b.mobil)" +
-		" + (b.masak * b.masak) + (b.ssingle * b.ssingle) + (b.smarried * b.smarried) + (b.kprt * b.kprt)" +
-		" + (b.kbabysitter * b.kbabysitter) + (b.kseniorcare * b.kseniorcare) + (b.ksupir * b.ksupir)" +
-		" + (b.kofficeboy * b.kofficeboy) + (b.ktukangkebun * b.ktukangkebun) + (b.gajiawal * b.gajiawal)" +
-		" + (b.gajiakhir * b.gajiakhir) + (b.jarak * b.jarak)) as y," +
-		" ((a.aislam * b.aislam) + (a.akatolik * b.akatolik) + (a.akristen * b.akristen)" +
-		" + (a.ahindu * b.ahindu) +(a.abuddha * b.abuddha) + (a.akonghucu * b.akonghucu)" +
-		" + (a.tkmenginap * b.tkmenginap) + (a.tkwarnen * b.tkwarnen) + (a.hewan * b.hewan)" +
-		" + (a.mabukjalan * b.mabukjalan) + (a.sepedamotor * b.sepedamotor) + (a.mobil * b.mobil)" +
-		" + (a.masak * b.masak) + (a.ssingle * b.ssingle) + (a.smarried * b.smarried) + (a.kprt * b.kprt)" +
-		" + (a.kbabysitter * b.kbabysitter) + (a.kseniorcare * b.kseniorcare) + (a.ksupir * b.ksupir)" +
-		" + (a.kofficeboy * b.kofficeboy) + (a.ktukangkebun * b.ktukangkebun) + (a.gajiawal * b.gajiawal)" +
-		" + (a.gajiakhir * b.gajiakhir) + (a.jarak * b.jarak))/" +
-		" sqrt(((a.aislam * a.aislam) + (a.akatolik * a.akatolik) + (a.akristen * a.akristen)" +
-		" + (a.ahindu * a.ahindu) + (a.abuddha * a.abuddha) + (a.akonghucu * a.akonghucu)" +
-		" + (a.tkmenginap * a.tkmenginap) + (a.tkwarnen * a.tkwarnen) + (a.hewan * a.hewan)" +
-		" + (a.mabukjalan * a.mabukjalan) + (a.sepedamotor * a.sepedamotor) + (a.mobil * a.mobil)" +
-		" + (a.masak * a.masak) + (a.ssingle * a.ssingle) + (a.smarried * a.smarried) + (a.kprt * a.kprt)" +
-		" + (a.kbabysitter * a.kbabysitter) + (a.kseniorcare * a.kseniorcare) + (a.ksupir * a.ksupir)" +
-		" + (a.kofficeboy * a.kofficeboy) + (a.ktukangkebun * a.ktukangkebun) + (a.gajiawal * a.gajiawal)" +
-		" + (a.gajiakhir * a.gajiakhir) + (a.jarak*a.jarak))*" +
-		" ((b.aislam * b.aislam) + (b.akatolik * b.akatolik) + (b.akristen * b.akristen)" +
-		" + (b.ahindu * b.ahindu) + (b.abuddha * b.abuddha) + (b.akonghucu * b.akonghucu)" +
-		" + (b.tkmenginap * b.tkmenginap) + (b.tkwarnen * b.tkwarnen) + (b.hewan * b.hewan)" +
-		" + (b.mabukjalan * b.mabukjalan) + (b.sepedamotor * b.sepedamotor) + (b.mobil * b.mobil)" +
-		" + (b.masak * b.masak) + (b.ssingle * b.ssingle) + (b.smarried * b.smarried) + (b.kprt * b.kprt)" +
-		" + (b.kbabysitter * b.kbabysitter) + (b.kseniorcare * b.kseniorcare) + (b.ksupir * b.ksupir)" +
-		" + (b.kofficeboy * b.kofficeboy) + (b.ktukangkebun * b.ktukangkebun) + (b.gajiawal * b.gajiawal)" +
-		" + (b.gajiakhir * b.gajiakhir) + (b.jarak*b.jarak))) as cosinesimilarity," +
-		" up.namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone," +
-		" dpa.pendidikanterakhir, beratbadan, tinggibadan, dpa.aislam, dpa.akatolik, dpa.akristen," +
-		" dpa.ahindu, dpa.abuddha, dpa.akonghucu, dpa.tkmenginap, dpa.tkwarnen, dpa.hewan, dpa.mabukjalan," +
-		" dpa.sepedamotor, dpa.mobil, dpa.masak, dpa.ssingle, dpa.smarried," +
-		" dka.kprt, dka.kbabysitter, dka.kseniorcare, dka.ksupir, dka.kofficeboy, dka.ktukangkebun, pengalaman," +
-		" dka.gajiawal, dka.gajiakhir, ((a.jarak * (10-0)) - 0) as jarak, AVG(p.rating) as rating" +
-		" FROM " + tablename + " a" +
-		" JOIN " + tablename + " b" +
-		" JOIN userprofile up ON a.iduser = up.iduser" +
-		" JOIN detailprofileart dpa ON a.iduser = dpa.iduser" +
-		" JOIN detailkerjaart dka ON a.iduser = dka.iduser" +
-		" JOIN penilaian p ON a.iduser = p.idart" +
-		" WHERE b.iduser = " + id + " AND a.iduser != " + id +
-		" GROUP BY a.iduser" +
-		" ORDER BY cosinesimilarity DESC"
-
-	rows, err := con.Query(sqlStatement)
-	defer rows.Close()
-	if err != nil {
-		log.Printf(err.Error())
-		return res, err
-	}
-
-	for rows.Next() {
-		err = rows.Scan(&obj.IdART, &obj.IdMajikan, &obj.InnerProduct, &obj.X, &obj.Y, &obj.CosineSimilarity,
-			&obj.NamaLengkap, &obj.JenisKelamin, &obj.TempatLahir, &obj.TanggalLahir, &obj.Telephone,
-			&obj.Pendidikan, &obj.BeratBadan, &obj.TinggiBadan, &obj.AIslam, &obj.AKatolik,
-			&obj.AKristen, &obj.AHindu, &obj.ABuddha, &obj.AKonghucu, &obj.TKMenginap, &obj.TKWarnen,
-			&obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil, &obj.Masak, &obj.SSingle,
-			&obj.SMarried, &obj.KPrt, &obj.KBabysitter, &obj.KSeniorcare, &obj.KSupir, &obj.KOfficeboy,
-			&obj.KTukangkebun, &obj.Pengalaman, &obj.Gajiawal, &obj.Gajiakhir, &obj.Jarak, &obj.Rating)
-
-		if err != nil {
-			log.Printf(err.Error())
-			return res, err
-		}
-
-		arrobj = append(arrobj, obj)
-	}
-	res.Status = http.StatusOK
-	res.Message = "Sukses"
-	res.Data = arrobj
-
-	sqlStatement = "DROP TABLE " + tablename
-	_, err = con.Exec(sqlStatement)
-	if err != nil {
-		log.Printf(err.Error())
-		return res, nil
-	}
-
-	return res, nil
-}
-
-func CreateAndInsertTableTemp(kategori string, idmajikan int) (Response, error) {
-	var res Response
-
-	con := db.CreateCon()
-
-	name := "tabletemp"
-	id := strconv.Itoa(idmajikan)
-	tablename := name + id
-
-	sqlStatement := "CREATE TABLE IF NOT EXISTS " + tablename + " (iduser int, aislam int, akatolik int, " +
-		"akristen int, ahindu int, abuddha int, akonghucu int, tkmenginap int, " +
-		"tkwarnen int, hewan int, mabukjalan int, sepedamotor int, mobil int, masak int, ssingle int," +
-		"smarried int, kprt int, kbabysitter int, kseniorcare int, ksupir int, kofficeboy int," +
-		" ktukangkebun int, gajiawal double, gajiakhir double)"
-
+	// create tabletemp
+	sqlStatement := "CREATE TABLE IF NOT EXISTS " + tablename +
+		" (iduser int, aislam int, akatolik int, akristen int," +
+		" ahindu int, abuddha int, akonghucu int, hewan int," +
+		" mabukjalan int, sepedamotor int, mobil int, masak int," +
+		" ssingle int, smarried int, gajiawal double, gajiakhir double)"
 	_, err := con.Exec(sqlStatement)
 	if err != nil {
 		log.Printf(err.Error())
 		return res, nil
 	}
 
+	// copy data by kategori
 	if kategori == "prt" {
 		sqlStatement = "INSERT INTO " + tablename +
-			" SELECT dp.iduser, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, " +
-			"tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, " +
-			"smarried, dk.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, " +
-			"gajiawal, gajiakhir " +
+			" SELECT dp.iduser, aislam, akatolik, akristen, " +
+			"ahindu, abuddha, akonghucu, hewan, mabukjalan, " +
+			"sepedamotor, mobil, masak, ssingle, smarried, " +
+			"dk.gajiawal, dk.gajiakhir " +
 			"FROM detailprofileart dp " +
-			"JOIN detailkerjaart dk on dp.iduser = dk.iduser " +
-			"WHERE kprt=1"
+			"JOIN detailkerjaart dk ON dp.iduser = dk.iduser " +
+			"WHERE kprt = 1"
 		_, err = con.Exec(sqlStatement)
 		if err != nil {
 			log.Printf(err.Error())
@@ -1523,13 +1328,13 @@ func CreateAndInsertTableTemp(kategori string, idmajikan int) (Response, error) 
 		}
 	} else if kategori == "babysitter" {
 		sqlStatement = "INSERT INTO " + tablename +
-			" SELECT dp.iduser, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, " +
-			"tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, " +
-			"smarried, dk.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, " +
-			"gajiawal, gajiakhir " +
+			" SELECT dp.iduser, aislam, akatolik, akristen, " +
+			"ahindu, abuddha, akonghucu, hewan, mabukjalan, " +
+			"sepedamotor, mobil, masak, ssingle, smarried, " +
+			"dk.gajiawal, dk.gajiakhir " +
 			"FROM detailprofileart dp " +
-			"JOIN detailkerjaart dk on dp.iduser = dk.iduser " +
-			"WHERE kbabysitter=1"
+			"JOIN detailkerjaart dk ON dp.iduser = dk.iduser " +
+			"WHERE kbabysitter = 1"
 		_, err = con.Exec(sqlStatement)
 		if err != nil {
 			log.Printf(err.Error())
@@ -1537,13 +1342,13 @@ func CreateAndInsertTableTemp(kategori string, idmajikan int) (Response, error) 
 		}
 	} else if kategori == "seniorcare" {
 		sqlStatement = "INSERT INTO " + tablename +
-			" SELECT dp.iduser, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, " +
-			"tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, " +
-			"smarried, dk.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, " +
-			"gajiawal, gajiakhir " +
+			" SELECT dp.iduser, aislam, akatolik, akristen, " +
+			"ahindu, abuddha, akonghucu, hewan, mabukjalan, " +
+			"sepedamotor, mobil, masak, ssingle, smarried, " +
+			"dk.gajiawal, dk.gajiakhir " +
 			"FROM detailprofileart dp " +
-			"JOIN detailkerjaart dk on dp.iduser = dk.iduser " +
-			"WHERE kseniorcare=1"
+			"JOIN detailkerjaart dk ON dp.iduser = dk.iduser " +
+			"WHERE kseniorcare = 1"
 		_, err = con.Exec(sqlStatement)
 		if err != nil {
 			log.Printf(err.Error())
@@ -1551,13 +1356,13 @@ func CreateAndInsertTableTemp(kategori string, idmajikan int) (Response, error) 
 		}
 	} else if kategori == "supir" {
 		sqlStatement = "INSERT INTO " + tablename +
-			" SELECT dp.iduser, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, " +
-			"tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, " +
-			"smarried, dk.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, " +
-			"gajiawal, gajiakhir " +
+			" SELECT dp.iduser, aislam, akatolik, akristen, " +
+			"ahindu, abuddha, akonghucu, hewan, mabukjalan, " +
+			"sepedamotor, mobil, masak, ssingle, smarried, " +
+			"dk.gajiawal, dk.gajiakhir " +
 			"FROM detailprofileart dp " +
-			"JOIN detailkerjaart dk on dp.iduser = dk.iduser " +
-			"WHERE ksupir=1"
+			"JOIN detailkerjaart dk ON dp.iduser = dk.iduser " +
+			"WHERE ksupir = 1"
 		_, err = con.Exec(sqlStatement)
 		if err != nil {
 			log.Printf(err.Error())
@@ -1565,13 +1370,13 @@ func CreateAndInsertTableTemp(kategori string, idmajikan int) (Response, error) 
 		}
 	} else if kategori == "officeboy" {
 		sqlStatement = "INSERT INTO " + tablename +
-			" SELECT dp.iduser, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, " +
-			"tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, " +
-			"smarried, dk.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, " +
-			"gajiawal, gajiakhir " +
+			" SELECT dp.iduser, aislam, akatolik, akristen, " +
+			"ahindu, abuddha, akonghucu, hewan, mabukjalan, " +
+			"sepedamotor, mobil, masak, ssingle, smarried, " +
+			"dk.gajiawal, dk.gajiakhir " +
 			"FROM detailprofileart dp " +
-			"JOIN detailkerjaart dk on dp.iduser = dk.iduser " +
-			"WHERE kofficeboy=1"
+			"JOIN detailkerjaart dk ON dp.iduser = dk.iduser " +
+			"WHERE kofficeboy = 1"
 		_, err = con.Exec(sqlStatement)
 		if err != nil {
 			log.Printf(err.Error())
@@ -1579,13 +1384,13 @@ func CreateAndInsertTableTemp(kategori string, idmajikan int) (Response, error) 
 		}
 	} else if kategori == "tukangkebun" {
 		sqlStatement = "INSERT INTO " + tablename +
-			" SELECT dp.iduser, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, " +
-			"tkmenginap, tkwarnen, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, " +
-			"smarried, dk.kprt, kbabysitter, kseniorcare, ksupir, kofficeboy, ktukangkebun, " +
-			"gajiawal, gajiakhir " +
+			" SELECT dp.iduser, aislam, akatolik, akristen, " +
+			"ahindu, abuddha, akonghucu, hewan, mabukjalan, " +
+			"sepedamotor, mobil, masak, ssingle, smarried, " +
+			"dk.gajiawal, dk.gajiakhir " +
 			"FROM detailprofileart dp " +
-			"JOIN detailkerjaart dk on dp.iduser = dk.iduser " +
-			"WHERE ktukangkebun=1"
+			"JOIN detailkerjaart dk ON dp.iduser = dk.iduser " +
+			"WHERE ktukangkebun = 1"
 		_, err = con.Exec(sqlStatement)
 		if err != nil {
 			log.Printf(err.Error())
@@ -1594,6 +1399,7 @@ func CreateAndInsertTableTemp(kategori string, idmajikan int) (Response, error) 
 	}
 
 	sqlStatement = "ALTER TABLE " + tablename + " ADD jarak double NOT NULL"
+
 	_, err = con.Exec(sqlStatement)
 	if err != nil {
 		log.Printf(err.Error())
@@ -1602,12 +1408,12 @@ func CreateAndInsertTableTemp(kategori string, idmajikan int) (Response, error) 
 
 	res.Status = http.StatusOK
 	res.Message = "Sukses"
-	res.Data = "Berhasil Buat dan Copy"
+	res.Data = "Berhasil Prepare Data Table"
 
 	return res, nil
 }
 
-func UpdateJarak(idmajikan int, idart int, jarak float64) (Response, error) {
+func UpdateJarakTableDataFK(idmajikan int, idart int, jarak float64) (Response, error) {
 	var res Response
 
 	con := db.CreateCon()
@@ -1639,6 +1445,221 @@ func UpdateJarak(idmajikan int, idart int, jarak float64) (Response, error) {
 	res.Message = "Sukses"
 	res.Data = map[string]int64{
 		"rowsAffected": rowsAffected,
+	}
+
+	return res, nil
+}
+
+func SearchDataARTbyFK(idmajikan int, aislam int, akatolik int, akristen int,
+	ahindu int, abuddha int, akonghucu int, hewan int, mabukjalan int,
+	sepedamotor int, mobil int, masak int, ssingle int, smarried int,
+	gajiawal int, gajiakhir int, jarak int, mandatory string) (Response, error) {
+	var obj DatabyFilter
+	var arrobj []DatabyFilter
+	var res Response
+
+	con := db.CreateCon()
+
+	name := "tabletemp"
+	id := strconv.Itoa(idmajikan)
+	tablename := name + id
+
+	sqlStatement := ""
+
+	sqlStatement = "INSERT INTO " + tablename +
+		" (iduser, aislam, akatolik, akristen, ahindu, abuddha, akonghucu," +
+		" hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried," +
+		" gajiawal, gajiakhir, jarak)" +
+		" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	_, err := con.Exec(sqlStatement, idmajikan, aislam, akatolik, akristen, ahindu, abuddha, akonghucu, hewan, mabukjalan, sepedamotor, mobil, masak, ssingle, smarried, gajiawal, gajiakhir, jarak)
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	if mandatory == "menginap" {
+		sqlStatement = "UPDATE " + tablename +
+			" SET gajiawal = (gajiawal-0)/(4000000-0)," +
+			" gajiakhir = (gajiakhir-0)/(4000000-0)"
+		_, err = con.Exec(sqlStatement)
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		sqlStatement = "SELECT a.iduser as idart," +
+			" ((a.aislam*b.aislam) + (a.akatolik*b.akatolik) + (a.akristen*b.akristen) +" +
+			" (a.ahindu*b.ahindu) + (a.abuddha*b.abuddha) + (a.akonghucu*b.akonghucu) +" +
+			" (a.hewan*b.hewan) + (a.mabukjalan*b.mabukjalan) + (a.sepedamotor*b.sepedamotor) +" +
+			" (a.mobil*b.mobil) + (a.masak*b.masak) + (a.ssingle*b.ssingle) + (a.smarried*b.smarried) +" +
+			" (a.gajiawal*b.gajiawal) + (a.gajiakhir*b.gajiakhir)) as innerproduct," +
+			" ((a.aislam*a.aislam) + (a.akatolik*a.akatolik) + (a.akristen*a.akristen) +" +
+			" (a.ahindu*a.ahindu) + (a.abuddha*a.abuddha) + (a.akonghucu*a.akonghucu) +" +
+			" (a.hewan*a.hewan) + (a.mabukjalan*a.mabukjalan) + (a.sepedamotor*a.sepedamotor) +" +
+			" (a.mobil*a.mobil) + (a.masak*a.masak) + (a.ssingle*a.ssingle) + (a.smarried*a.smarried) +" +
+			" (a.gajiawal*a.gajiawal) + (a.gajiakhir*a.gajiakhir)) as x," +
+			" ((b.aislam*b.aislam) + (b.akatolik*b.akatolik) + (b.akristen*b.akristen) +" +
+			" (b.ahindu*b.ahindu) + (b.abuddha*b.abuddha) + (b.akonghucu*b.akonghucu) +" +
+			" (b.hewan*b.hewan) + (b.mabukjalan*b.mabukjalan) + (b.sepedamotor*b.sepedamotor) +" +
+			" (b.mobil*b.mobil) + (b.masak*b.masak) + (b.ssingle*b.ssingle) + (b.smarried*b.smarried) +" +
+			" (b.gajiawal*b.gajiawal) + (b.gajiakhir*b.gajiakhir)) as y," +
+			" ((a.aislam*b.aislam) + (a.akatolik*b.akatolik) + (a.akristen*b.akristen) +" +
+			" (a.ahindu*b.ahindu) + (a.abuddha*b.abuddha) + (a.akonghucu*b.akonghucu) +" +
+			" (a.hewan*b.hewan) + (a.mabukjalan*b.mabukjalan) + (a.sepedamotor*b.sepedamotor) +" +
+			" (a.mobil*b.mobil) + (a.masak*b.masak) + (a.ssingle*b.ssingle) + (a.smarried*b.smarried) +" +
+			" (a.gajiawal*b.gajiawal) + (a.gajiakhir*b.gajiakhir)) /" +
+			" sqrt(((a.aislam*a.aislam) + (a.akatolik*a.akatolik) + (a.akristen*a.akristen) +" +
+			" (a.ahindu*a.ahindu) + (a.abuddha*a.abuddha) + (a.akonghucu*a.akonghucu) +" +
+			" (a.hewan*a.hewan) + (a.mabukjalan*a.mabukjalan) + (a.sepedamotor*a.sepedamotor) +" +
+			" (a.mobil*a.mobil) + (a.masak*a.masak) + (a.ssingle*a.ssingle) + (a.smarried*a.smarried) +" +
+			" (a.gajiawal*a.gajiawal) + (a.gajiakhir*a.gajiakhir)) *" +
+			" ((b.aislam*b.aislam) + (b.akatolik*b.akatolik) + (b.akristen*b.akristen) +" +
+			" (b.ahindu*b.ahindu) + (b.abuddha*b.abuddha) + (b.akonghucu*b.akonghucu) +" +
+			" (b.hewan*b.hewan) + (b.mabukjalan*b.mabukjalan) + (b.sepedamotor*b.sepedamotor) +" +
+			" (b.mobil*b.mobil) + (b.masak*b.masak) + (b.ssingle*b.ssingle) + (b.smarried*b.smarried) +" +
+			" (b.gajiawal*b.gajiawal) + (b.gajiakhir*b.gajiakhir))) as cosinesimilarity," +
+			" up.namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone," +
+			" dp.pendidikanterakhir, beratbadan, tinggibadan, dp.aislam, dp.akatolik," +
+			" dp.akristen, dp.ahindu, dp.abuddha, dp.akonghucu, dp.tkmenginap, dp.tkwarnen," +
+			" dp.hewan, dp.mabukjalan, dp.sepedamotor, dp.mobil, dp.masak, dp.ssingle, dp.smarried," +
+			" dk.kprt, dk.kbabysitter, dk.kseniorcare, dk.ksupir, dk.kofficeboy, dk.ktukangkebun," +
+			" dk.pengalaman, dk.gajiawal, dk.gajiakhir, a.jarak," +
+			" AVG(p.rating) as rating" +
+			" FROM " + tablename + " a" +
+			" JOIN " + tablename + " b" +
+			" JOIN userprofile up ON up.iduser = a.iduser" +
+			" JOIN detailprofileart dp ON dp.iduser = a.iduser" +
+			" JOIN detailkerjaart dk ON dk.iduser = a.iduser" +
+			" JOIN penilaian p ON p.idart = a.iduser" +
+			" WHERE b.iduser = " + id + " AND a.iduser != " + id +
+			" GROUP BY a.iduser" +
+			" ORDER BY cosinesimilarity DESC"
+
+		rows, err := con.Query(sqlStatement)
+		defer rows.Close()
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		for rows.Next() {
+			err = rows.Scan(&obj.IdART, &obj.InnerProduct, &obj.X, &obj.Y, &obj.CosineSimilarity,
+				&obj.NamaLengkap, &obj.JenisKelamin, &obj.TempatLahir, &obj.TanggalLahir, &obj.Telephone,
+				&obj.Pendidikan, &obj.BeratBadan, &obj.TinggiBadan, &obj.AIslam, &obj.AKatolik,
+				&obj.AKristen, &obj.AHindu, &obj.ABuddha, &obj.AKonghucu, &obj.TKMenginap, &obj.TKWarnen,
+				&obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil, &obj.Masak, &obj.SSingle,
+				&obj.SMarried, &obj.KPrt, &obj.KBabysitter, &obj.KSeniorcare, &obj.KSupir, &obj.KOfficeboy,
+				&obj.KTukangkebun, &obj.Pengalaman, &obj.Gajiawal, &obj.Gajiakhir, &obj.Jarak, &obj.Rating)
+
+			if err != nil {
+				log.Printf(err.Error())
+				return res, err
+			}
+
+			arrobj = append(arrobj, obj)
+		}
+		res.Status = http.StatusOK
+		res.Message = "Sukses"
+		res.Data = arrobj
+
+		sqlStatement = "DROP TABLE " + tablename
+		_, err = con.Exec(sqlStatement)
+		if err != nil {
+			log.Printf(err.Error())
+			return res, nil
+		}
+	} else if mandatory == "warnen" {
+		sqlStatement = "UPDATE " + tablename +
+			" SET gajiawal = (gajiawal-0)/(4000000-0)," +
+			" gajiakhir = (gajiakhir-0)/(4000000-0)," +
+			" jarak = (jarak-0)/(10-0)"
+		_, err = con.Exec(sqlStatement)
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		sqlStatement = "SELECT a.iduser as idart," +
+			" ((a.aislam*b.aislam) + (a.akatolik*b.akatolik) + (a.akristen*b.akristen) +" +
+			" (a.ahindu*b.ahindu) + (a.abuddha*b.abuddha) + (a.akonghucu*b.akonghucu) +" +
+			" (a.hewan*b.hewan) + (a.mabukjalan*b.mabukjalan) + (a.sepedamotor*b.sepedamotor) +" +
+			" (a.mobil*b.mobil) + (a.masak*b.masak) + (a.ssingle*b.ssingle) + (a.smarried*b.smarried) +" +
+			" (a.gajiawal*b.gajiawal) + (a.gajiakhir*b.gajiakhir) + (a.jarak*b.jarak)) as innerproduct," +
+			" ((a.aislam*a.aislam) + (a.akatolik*a.akatolik) + (a.akristen*a.akristen) +" +
+			" (a.ahindu*a.ahindu) + (a.abuddha*a.abuddha) + (a.akonghucu*a.akonghucu) +" +
+			" (a.hewan*a.hewan) + (a.mabukjalan*a.mabukjalan) + (a.sepedamotor*a.sepedamotor) +" +
+			" (a.mobil*a.mobil) + (a.masak*a.masak) + (a.ssingle*a.ssingle) + (a.smarried*a.smarried) +" +
+			" (a.gajiawal*a.gajiawal) + (a.gajiakhir*a.gajiakhir) + (a.jarak*a.jarak)) as x," +
+			" ((b.aislam*b.aislam) + (b.akatolik*b.akatolik) + (b.akristen*b.akristen) +" +
+			" (b.ahindu*b.ahindu) + (b.abuddha*b.abuddha) + (b.akonghucu*b.akonghucu) +" +
+			" (b.hewan*b.hewan) + (b.mabukjalan*b.mabukjalan) + (b.sepedamotor*b.sepedamotor) +" +
+			" (b.mobil*b.mobil) + (b.masak*b.masak) + (b.ssingle*b.ssingle) + (b.smarried*b.smarried) +" +
+			" (b.gajiawal*b.gajiawal) + (b.gajiakhir*b.gajiakhir) + (b.jarak*b.jarak)) as y," +
+			" ((a.aislam*b.aislam) + (a.akatolik*b.akatolik) + (a.akristen*b.akristen) +" +
+			" (a.ahindu*b.ahindu) + (a.abuddha*b.abuddha) + (a.akonghucu*b.akonghucu) +" +
+			" (a.hewan*b.hewan) + (a.mabukjalan*b.mabukjalan) + (a.sepedamotor*b.sepedamotor) +" +
+			" (a.mobil*b.mobil) + (a.masak*b.masak) + (a.ssingle*b.ssingle) + (a.smarried*b.smarried) +" +
+			" (a.gajiawal*b.gajiawal) + (a.gajiakhir*b.gajiakhir) + (a.jarak*b.jarak)) /" +
+			" sqrt(((a.aislam*a.aislam) + (a.akatolik*a.akatolik) + (a.akristen*a.akristen) +" +
+			" (a.ahindu*a.ahindu) + (a.abuddha*a.abuddha) + (a.akonghucu*a.akonghucu) +" +
+			" (a.hewan*a.hewan) + (a.mabukjalan*a.mabukjalan) + (a.sepedamotor*a.sepedamotor) +" +
+			" (a.mobil*a.mobil) + (a.masak*a.masak) + (a.ssingle*a.ssingle) + (a.smarried*a.smarried) +" +
+			" (a.gajiawal*a.gajiawal) + (a.gajiakhir*a.gajiakhir) + (a.jarak*a.jarak)) *" +
+			" ((b.aislam*b.aislam) + (b.akatolik*b.akatolik) + (b.akristen*b.akristen) +" +
+			" (b.ahindu*b.ahindu) + (b.abuddha*b.abuddha) + (b.akonghucu*b.akonghucu) +" +
+			" (b.hewan*b.hewan) + (b.mabukjalan*b.mabukjalan) + (b.sepedamotor*b.sepedamotor) +" +
+			" (b.mobil*b.mobil) + (b.masak*b.masak) + (b.ssingle*b.ssingle) + (b.smarried*b.smarried) +" +
+			" (b.gajiawal*b.gajiawal) + (b.gajiakhir*b.gajiakhir) + (b.jarak*b.jarak))) as cosinesimilarity," +
+			" up.namalengkap, jeniskelamin, tempatlahir, tanggallahir, telephone," +
+			" dp.pendidikanterakhir, beratbadan, tinggibadan, dp.aislam, dp.akatolik," +
+			" dp.akristen, dp.ahindu, dp.abuddha, dp.akonghucu, dp.tkmenginap, dp.tkwarnen," +
+			" dp.hewan, dp.mabukjalan, dp.sepedamotor, dp.mobil, dp.masak, dp.ssingle, dp.smarried," +
+			" dk.kprt, dk.kbabysitter, dk.kseniorcare, dk.ksupir, dk.kofficeboy, dk.ktukangkebun," +
+			" dk.pengalaman, dk.gajiawal, dk.gajiakhir, ((a.jarak * (10-0)) - 0) as jarak," +
+			" AVG(p.rating) as rating" +
+			" FROM " + tablename + " a" +
+			" JOIN " + tablename + " b" +
+			" JOIN userprofile up ON up.iduser = a.iduser" +
+			" JOIN detailprofileart dp ON dp.iduser = a.iduser" +
+			" JOIN detailkerjaart dk ON dk.iduser = a.iduser" +
+			" JOIN penilaian p ON p.idart = a.iduser" +
+			" WHERE b.iduser = " + id + " AND a.iduser != " + id +
+			" GROUP BY a.iduser" +
+			" ORDER BY cosinesimilarity DESC"
+
+		rows, err := con.Query(sqlStatement)
+		defer rows.Close()
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		for rows.Next() {
+			err = rows.Scan(&obj.IdART, &obj.InnerProduct, &obj.X, &obj.Y, &obj.CosineSimilarity,
+				&obj.NamaLengkap, &obj.JenisKelamin, &obj.TempatLahir, &obj.TanggalLahir, &obj.Telephone,
+				&obj.Pendidikan, &obj.BeratBadan, &obj.TinggiBadan, &obj.AIslam, &obj.AKatolik,
+				&obj.AKristen, &obj.AHindu, &obj.ABuddha, &obj.AKonghucu, &obj.TKMenginap, &obj.TKWarnen,
+				&obj.Hewan, &obj.MabukJalan, &obj.SepedaMotor, &obj.Mobil, &obj.Masak, &obj.SSingle,
+				&obj.SMarried, &obj.KPrt, &obj.KBabysitter, &obj.KSeniorcare, &obj.KSupir, &obj.KOfficeboy,
+				&obj.KTukangkebun, &obj.Pengalaman, &obj.Gajiawal, &obj.Gajiakhir, &obj.Jarak, &obj.Rating)
+
+			if err != nil {
+				log.Printf(err.Error())
+				return res, err
+			}
+
+			arrobj = append(arrobj, obj)
+		}
+		res.Status = http.StatusOK
+		res.Message = "Sukses"
+		res.Data = arrobj
+
+		sqlStatement = "DROP TABLE " + tablename
+		_, err = con.Exec(sqlStatement)
+		if err != nil {
+			log.Printf(err.Error())
+			return res, nil
+		}
 	}
 
 	return res, nil
@@ -1811,6 +1832,158 @@ func DataKontakART(idmajikan int) (Response, error) {
 	return res, nil
 }
 
+type DataPelamarObject struct {
+	Idloker      int     `json:"idloker"`
+	Judulloker   string  `json:"judulloker"`
+	Idart        int     `json:"idart"`
+	Namalengkap  string  `json:"namalengkap"`
+	Tanggallahir string  `json:"tanggallahir"`
+	Telephone    string  `json:"telephone"`
+	Kprt         int     `json:"kprt"`
+	Kbabysitter  int     `json:"kbabysitter"`
+	Kseniorcare  int     `json:"kseniorcare"`
+	Ksupir       int     `json:"ksupir"`
+	Kofficeboy   int     `json:"kofficeboy"`
+	Ktukangkebun int     `json:"ktukangkebun"`
+	Rating       float64 `json:"rating"`
+}
+
+func DataPelamar(idmajikan int) (Response, error) {
+	var obj DataPelamarObject
+	var arrobj []DataPelamarObject
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT ll.idloker as idloker, lk.judulloker," +
+		" ll.idart as idart, up.namalengkap, up.tanggallahir, up.telephone," +
+		" dk.kprt, dk.kbabysitter, dk.kseniorcare, dk.ksupir, dk.kofficeboy," +
+		" dk.ktukangkebun, AVG(p.rating)" +
+		" FROM lamarloker ll" +
+		" JOIN userprofile up ON ll.idart = up.iduser" +
+		" JOIN detailkerjaart dk ON ll.idart = dk.iduser" +
+		" JOIN penilaian p ON ll.idart = p.idart" +
+		" JOIN lowongankerja lk ON ll.idloker = lk.idloker" +
+		" WHERE lk.iduser = ?" +
+		" GROUP BY ll.idlamar"
+
+	rows, err := con.Query(sqlStatement, idmajikan)
+
+	defer rows.Close()
+
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.Idloker, &obj.Judulloker, &obj.Idart, &obj.Namalengkap, &obj.Tanggallahir, &obj.Telephone,
+			&obj.Kprt, &obj.Kbabysitter, &obj.Kseniorcare, &obj.Ksupir,
+			&obj.Kofficeboy, &obj.Ktukangkebun, &obj.Rating)
+
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		arrobj = append(arrobj, obj)
+	}
+	log.Printf("berhasil")
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = arrobj
+
+	return res, nil
+}
+
+func SaveLamaran(idloker int, idart int, waktulamar string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "INSERT INTO lamarloker (idloker, idart, waktulamar) VALUES (?, ?, ?)"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(idloker, idart, waktulamar)
+	if err != nil {
+		return res, err
+	}
+
+	defer stmt.Close()
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"rowsAffected": rowsAffected,
+	}
+
+	return res, nil
+}
+
+type DataLamaranObj struct {
+	Idlamar     int    `json:"idlamar"`
+	Idloker     int    `json:"idloker"`
+	Judulloker  string `json:"judulloker"`
+	Iduser      int    `json:"iduser"`
+	Namalengkap string `json:"namalengkap"`
+	Kecamatan   string `json:"kecamatan"`
+	Kota        string `json:"kota"`
+	Waktulamar  string `json:"waktulamar"`
+}
+
+func DataLamaran(idart int) (Response, error) {
+	var obj DataLamaranObj
+	var arrobj []DataLamaranObj
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT ll.idlamar, ll.idloker, lk.judulloker, lk.iduser, up.namalengkap," +
+		" ud.kecamatan, ud.kota, ll.waktulamar" +
+		" FROM lamarloker ll" +
+		" JOIN lowongankerja lk ON ll.idloker = lk.idloker" +
+		" JOIN userprofile up ON lk.iduser = up.iduser" +
+		" JOIN userdomisili ud ON lk.iduser = ud.iduser" +
+		" WHERE ll.idart = ?" +
+		" ORDER BY ll.waktulamar DESC"
+
+	rows, err := con.Query(sqlStatement, idart)
+
+	defer rows.Close()
+
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.Idlamar, &obj.Idloker, &obj.Judulloker, &obj.Iduser,
+			&obj.Namalengkap, &obj.Kecamatan, &obj.Kota, &obj.Waktulamar)
+
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		arrobj = append(arrobj, obj)
+	}
+	log.Printf("berhasil")
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = arrobj
+
+	return res, nil
+}
+
 type DataKontakMajikanObj struct {
 	Idmajikan   int    `json:"idmajikan"`
 	Namalengkap string `json:"namalengkap"`
@@ -1830,7 +2003,7 @@ func DataKontakMajikan(idart int) (Response, error) {
 		" ud.kecamatan, ud.kota " +
 		"FROM kontakart ka " +
 		"JOIN userprofile up ON ka.idmajikan = up.iduser " +
-		"JOIN userdomisili ud on ka.idmajikan = ud.iduser" +
+		"JOIN userdomisili ud on ka.idmajikan = ud.iduser " +
 		"WHERE ka.idart = ?"
 
 	rows, err := con.Query(sqlStatement, idart)
@@ -1867,16 +2040,16 @@ type KontakArtObj struct {
 	Waktukontak string `json:"waktukontak"`
 }
 
-func KontakArt(idart int) (Response, error) {
+func KontakArt(idart int, idmajikan int) (Response, error) {
 	var obj KontakArtObj
 	var arrobj []KontakArtObj
 	var res Response
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT * FROM kontakart WHERE idart = ?"
+	sqlStatement := "SELECT * FROM kontakart WHERE idart = ? AND idmajikan = ?"
 
-	rows, err := con.Query(sqlStatement, idart)
+	rows, err := con.Query(sqlStatement, idart, idmajikan)
 
 	defer rows.Close()
 
@@ -1899,6 +2072,153 @@ func KontakArt(idart int) (Response, error) {
 	res.Status = http.StatusOK
 	res.Message = "Sukses"
 	res.Data = arrobj
+
+	return res, nil
+}
+
+func SimpanLamaran(idloker int, idart int, waktulamar string) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "INSERT INTO kontakart (idloker, idart, waktulamar) VALUES (?, ?, ?)"
+
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(idloker, idart, waktulamar)
+	if err != nil {
+		return res, err
+	}
+
+	defer stmt.Close()
+
+	getIdLast, err := result.LastInsertId()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"getIdLast": getIdLast,
+	}
+
+	return res, nil
+}
+
+type LamarObj struct {
+	Idlamar    int    `json:"idlamar"`
+	Idloker    int    `json:"idloker"`
+	Idart      int    `json:"idart"`
+	Waktulamar string `json:"waktulamar"`
+}
+
+func LamarLoker(idloker int, idart int) (Response, error) {
+	var obj LamarObj
+	var arrobj []LamarObj
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT * FROM lamarloker WHERE idloker = ? AND idart = ?"
+
+	rows, err := con.Query(sqlStatement, idloker, idart)
+
+	defer rows.Close()
+
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.Idlamar, &obj.Idloker, &obj.Idart, &obj.Waktulamar)
+
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		arrobj = append(arrobj, obj)
+	}
+	log.Printf("berhasil")
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = arrobj
+
+	return res, nil
+}
+
+type IdLamarObj struct {
+	Idlamar int `json:"idlamar"`
+	Idloker int `json:"idloker"`
+}
+
+func GetIdLamar(idloker int) (Response, error) {
+	var obj IdLamarObj
+	var arrobj []IdLamarObj
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT idlamar, idloker FROM lamarloker WHERE idloker = ?"
+
+	rows, err := con.Query(sqlStatement, idloker)
+
+	defer rows.Close()
+
+	if err != nil {
+		log.Printf(err.Error())
+		return res, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&obj.Idlamar, &obj.Idloker)
+
+		if err != nil {
+			log.Printf(err.Error())
+			return res, err
+		}
+
+		arrobj = append(arrobj, obj)
+	}
+	log.Printf("berhasil")
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = arrobj
+
+	return res, nil
+}
+
+func DeleteLamarLoker(idlamar int) (Response, error) {
+	var res Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "DELETE FROM lamarloker WHERE idlamar = ?"
+	stmt, err := con.Prepare(sqlStatement)
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(idlamar)
+	if err != nil {
+		return res, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = map[string]int64{
+		"rows": rowsAffected,
+	}
 
 	return res, nil
 }
@@ -2024,77 +2344,3 @@ func DataReviewMajikan(idart int) (Response, error) {
 
 	return res, nil
 }
-
-//type SertifikatPelatihan struct {
-//	IdUser     int    `json:"iduser"`
-//	SertifPath string `json:"sertifpath"`
-//}
-//
-//func SimpanSertifikatPelatihan(iduser int, sertifpath string) (Response, error) {
-//	var res Response
-//
-//	con := db.CreateCon()
-//
-//	sqlStatement := "INSERT INTO sertifikatpelatihan (iduser, sertifpath) VALUES (?, ?)"
-//
-//	stmt, err := con.Prepare(sqlStatement)
-//	if err != nil {
-//		return res, err
-//	}
-//
-//	result, err := stmt.Exec(iduser, sertifpath)
-//	if err != nil {
-//		return res, err
-//	}
-//
-//	defer stmt.Close()
-//
-//	rowsAffected, err := result.RowsAffected()
-//	if err != nil {
-//		return res, err
-//	}
-//
-//	res.Status = http.StatusOK
-//	res.Message = "Sukses"
-//	res.Data = map[string]int64{
-//		"rowsAffected": rowsAffected,
-//	}
-//
-//	return res, nil
-//}
-//
-//func DataSertifPelatihanUser(iduser int) (Response, error) {
-//	var obj SertifikatPelatihan
-//	var arrobj []SertifikatPelatihan
-//	var res Response
-//
-//	con := db.CreateCon()
-//
-//	sqlStatemet := "SELECT * FROM sertifikatpelatihan WHERE iduser=?"
-//
-//	rows, err := con.Query(sqlStatemet, iduser)
-//
-//	defer rows.Close()
-//
-//	if err != nil {
-//		log.Printf(err.Error())
-//		return res, err
-//	}
-//
-//	for rows.Next() {
-//		err = rows.Scan(&obj.IdUser, &obj.SertifPath)
-//
-//		if err != nil {
-//			log.Printf(err.Error())
-//			return res, err
-//		}
-//
-//		arrobj = append(arrobj, obj)
-//	}
-//	log.Printf("berhasil")
-//	res.Status = http.StatusOK
-//	res.Message = "Sukses"
-//	res.Data = arrobj
-//
-//	return res, nil
-//}

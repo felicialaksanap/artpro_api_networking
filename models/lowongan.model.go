@@ -229,6 +229,7 @@ type DataLokerFilter struct {
 	X                float64 `json:"x"`
 	Y                float64 `json:"y"`
 	Cosinesimilarity float64 `json:"cosinesimilarity"`
+	Jarak            float64 `json:"jarakawal"`
 	Iduser           int     `json:"iduser"`
 	Judul            string  `json:"judul"`
 	Gajiawal         int     `json:"gajiawal"`
@@ -255,7 +256,6 @@ type DataLokerFilter struct {
 	Jeniskelamin     string  `json:"jeniskelamin"`
 	Kecamatan        string  `json:"kecamatan"`
 	Kota             string  `json:"kota"`
-	Jarak            float64 `json:"jarak"`
 }
 
 func DataLokerbyFilter(idart string, kprt int, kbabysitter int, kseniorcare int,
@@ -364,9 +364,10 @@ func DataLokerbyFilter(idart string, kprt int, kbabysitter int, kseniorcare int,
 		" (b.masak * b.masak) + (b.mabukjalan * b.mabukjalan) + (b.sepedamotor * b.sepedamotor) + (b.mobil * b.mobil) +" +
 		" (b.tkmenginap * b.tkmenginap) + (b.tkwarnen * b.tkwarnen) + (b.ssingle * b.ssingle) + (b.smarried * b.smarried) +" +
 		" (b.gajiawal * b.gajiawal) + (b.gajiakhir * b.gajiakhir))) as cosinesimilarity," +
+		" (a.jarak * 10) as jarakawal," +
 		" lk.iduser, judulloker, lk.gajiawal, lk.gajiakhir, informasi, tugas, lk.kprt, lk.kbabysitter, lk.kseniorcare," +
 		" lk.ksupir, lk.kofficeboy, lk.ktukangkebun, lk.hewan, lk.masak, lk.mabukjalan, lk.sepedamotor, lk.mobil, lk.tkmenginap," +
-		" lk.tkwarnen, lk.ssingle, lk.smarried, lk.tglpost, up.namalengkap, jeniskelamin, ud.kecamatan, kota, ((a.jarak * (10-0)) - 0) as jarak" +
+		" lk.tkwarnen, lk.ssingle, lk.smarried, lk.tglpost, up.namalengkap, jeniskelamin, ud.kecamatan, kota" +
 		" FROM " + tablename + " a" +
 		" JOIN " + tablename + " b" +
 		" JOIN lowongankerja lk ON a.idloker = lk.idloker" +
@@ -383,12 +384,12 @@ func DataLokerbyFilter(idart string, kprt int, kbabysitter int, kseniorcare int,
 	}
 
 	for rows.Next() {
-		err = rows.Scan(&obj.IdLoker, &obj.IdPencari, &obj.Innerproduct, &obj.X, &obj.Y, &obj.Cosinesimilarity,
+		err = rows.Scan(&obj.IdLoker, &obj.IdPencari, &obj.Innerproduct, &obj.X, &obj.Y, &obj.Cosinesimilarity, &obj.Jarak,
 			&obj.Iduser, &obj.Judul, &obj.Gajiawal, &obj.Gajiakhir, &obj.Informasi,
 			&obj.Tugas, &obj.Kprt, &obj.Kbabysitter, &obj.Kseniorcare, &obj.Ksupir,
 			&obj.Kofficeboy, &obj.Ktukangkebun, &obj.Hewan, &obj.Masak, &obj.Mabukjalan, &obj.Sepedamotor,
 			&obj.Mobil, &obj.Tkmenginap, &obj.Tkwarnen, &obj.Ssingle, &obj.Smarried, &obj.Tglpost,
-			&obj.Namalengkap, &obj.Jeniskelamin, &obj.Kecamatan, &obj.Kota, &obj.Jarak)
+			&obj.Namalengkap, &obj.Jeniskelamin, &obj.Kecamatan, &obj.Kota)
 
 		if err != nil {
 			log.Printf(err.Error())
@@ -401,12 +402,12 @@ func DataLokerbyFilter(idart string, kprt int, kbabysitter int, kseniorcare int,
 	res.Message = "Sukses"
 	res.Data = arrobj
 
-	//sqlStatement = "DROP TABLE " + tablename
-	//_, err = con.Exec(sqlStatement)
-	//if err != nil {
-	//	log.Printf(err.Error())
-	//	return res, nil
-	//}
+	sqlStatement = "DROP TABLE " + tablename
+	_, err = con.Exec(sqlStatement)
+	if err != nil {
+		log.Printf(err.Error())
+		return res, nil
+	}
 
 	return res, err
 }

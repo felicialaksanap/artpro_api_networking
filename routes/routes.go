@@ -21,6 +21,7 @@ func Init() *echo.Echo {
 	// ==== AKUN USER ====
 	e.POST("/addakunuser", controllers.SimpanAkunUser)
 	e.GET("/akunuser", controllers.DataAkunUser)
+	//e.POST("/akunuserweb", controllers.LoginWebHandler)
 	e.PUT("/editemailuser", controllers.UpdateEmailUser)
 	e.PUT("/editpassuser", controllers.UpdatePassUser)
 	// === END ====
@@ -54,9 +55,10 @@ func Init() *echo.Echo {
 	e.POST("/addkerjaart", controllers.SimpanDetailKerjaART)
 	e.GET("/alldatadetailkerjaart", controllers.DataAllDetailKerjaART)
 	e.GET("/dataartbykategori", controllers.DataARTbyKategori)
-	e.GET("/dataartbyfk", controllers.DataARTbyFK)
-	e.GET("/makeandcopytable", controllers.CreateAndInsertTableTemp)
-	e.PUT("updatejarak", controllers.UpdateJarak)
+	e.GET("/dataartbyid", controllers.DataARTbyId)
+	e.GET("/dataartbyfk", controllers.SearchDataARTbyFK)
+	e.GET("/preparedata", controllers.PrepareTableDataFK)
+	e.PUT("/updatejarak", controllers.UpdateJarakTableDataFK)
 	e.GET("/datauserdetailkerjaart", controllers.DataUserDetailKerjaART)
 	e.PUT("/edituserdetailkerjaart", controllers.UpdateUserDetailKerja)
 	// ==== END ====
@@ -83,13 +85,7 @@ func Init() *echo.Echo {
 	e.POST("/addpenilaian", controllers.SimpanPenilaian)
 	e.GET("/dataratapenilaian", controllers.RataPenilaianART)
 	e.GET("/datareviewmajikan", controllers.DataReviewMajikan)
-
 	// === END ===
-
-	// ===== SERTIFIKAT PELATIHAN =====
-	//e.POST("/addsertifpath", controllers.SimpanSertifikatPelatihan)
-	//e.GET("/datasertifpelatihanuser", controllers.DataSertifPelatihanUser)
-	// ===== END =====
 
 	// ===== BERITA ======
 	e.POST("/addberitatips", controllers.SimpanBerita)
@@ -106,6 +102,21 @@ func Init() *echo.Echo {
 	e.PUT("/updatepenyelesaian", controllers.UpdatePenyelesaian)
 	e.GET("/getallpengaduan", controllers.DataAllPengaduan)
 	// ==== END OF PENGADUAN =====
+
+	// ===== LAMAR LOKER =====
+	e.POST("/addlamaran", controllers.SaveLamaran)
+	e.GET("/datapelamar", controllers.DataPelamar)
+	e.GET("/datalamaran", controllers.DataLamaran)
+	e.GET("/getinfolamaran", controllers.LamarLoker)
+	e.GET("/getidlamarloker", controllers.GetIdLamar)
+	e.DELETE("/deletelamaran", controllers.DeleteLamarLoker)
+	// ==== END OF LAMAR LOKER =====
+
+	// ===== NOTIFIKASI =====
+	e.GET("/getnotifikasi", controllers.GetNotifikasi)
+	e.PUT("/updatestatusnotif", controllers.UpdateStatusNotif)
+	e.POST("/savenotifikasi", controllers.SaveNotifikasi)
+	// === END OF NOTIFIKASI ===
 
 	return e
 }

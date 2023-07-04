@@ -93,3 +93,48 @@ func DataAllPengaduan(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, result)
 }
+func SaveNotifikasi(c echo.Context) error {
+	idmajikan := c.FormValue("idmajikan")
+	idart := c.FormValue("idart")
+	title := c.FormValue("title")
+	message := c.FormValue("message")
+	status := c.FormValue("status")
+
+	imi, _ := strconv.Atoi(idmajikan)
+	iai, _ := strconv.Atoi(idart)
+
+	result, err := models.SaveNotifikasi(imi, iai, title, message, status)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func GetNotifikasi(c echo.Context) error {
+	idmajikan := c.FormValue("idmajikan")
+
+	imi, _ := strconv.Atoi(idmajikan)
+
+	result, err := models.GetNotifikasi(imi)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func UpdateStatusNotif(c echo.Context) error {
+	idnotif := c.FormValue("idnotif")
+	status := c.FormValue("status")
+
+	ini, _ := strconv.Atoi(idnotif)
+
+	result, err := models.UpdateStatusNotif(ini, status)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+
+}
